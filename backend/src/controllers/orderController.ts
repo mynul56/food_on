@@ -10,6 +10,12 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
         const { restaurantId, items, totalAmount, deliveryAddress } = req.body;
         const userId = req.user.id;
 
+        // Verify restaurant exists
+        const restaurant = await Restaurant.findByPk(restaurantId);
+        if (!restaurant) {
+            return res.status(404).json({ message: 'Restaurant not found' });
+        }
+
         const order = await sequelize.transaction(async (t: any) => {
             const newOrder = await Order.create({
                 userId,
@@ -33,7 +39,8 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
 
         res.status(201).json(order);
     } catch (error: any) {
-        res.status(500).json({ message: error.message });
+        console.error(`[Order Error] ${error.message}`);
+        res.status(500).json({ message: 'Failed to create order. Please try again later.' });
     }
 };
 

@@ -18,9 +18,13 @@ const PORT = process.env.PORT || 5000;
 
 // Middlewares
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(helmet());
-app.use(morgan('dev'));
+app.use(morgan('combined')); // Production style logs
 
 // Routes
 app.use('/api/auth', authRoutes);

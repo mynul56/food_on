@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../../core/utils/constants.dart';
+import '../../core/utils/ui_utils.dart';
 import '../../routes/app_pages.dart';
 import 'auth_service.dart';
 
@@ -18,7 +19,7 @@ class AdminService extends GetConnect {
       if (response.statusCode == 401) {
         Get.find<AuthService>().logout();
         Get.offAllNamed(AppRoutes.login);
-        Get.snackbar('Session Expired', 'Please login again');
+        AppUIUtils.showError('Session expired. Please login again.');
       }
       return response;
     });
