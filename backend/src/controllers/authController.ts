@@ -47,10 +47,19 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
+        console.log(`[Login Attempt] Email: ${email}`);
 
         const user = await User.findOne({ where: { email } });
         if (!user) {
+            console.log(`[Login Failed] User not found: ${email}`);
             return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        console.log(`[Debug] Password from body: ${password ? 'Present' : 'Undefined/Empty'}`);
+        console.log(`[Debug] User Password Hash: ${user.password ? 'Present' : 'Undefined/Empty'}`);
+
+        if (!password || !user.password) {
+            return res.status(400).json({ message: 'Illegal arguments: string, undefined' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);

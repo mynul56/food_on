@@ -2,15 +2,15 @@ import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config/database.js';
 
 class User extends Model {
-    public id!: number;
-    public name!: string;
-    public email!: string;
-    public password!: string;
-    public role!: 'admin' | 'user' | 'driver' | 'restaurant';
-    public phoneNumber?: string;
-    public address?: string;
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
+    declare id: number;
+    declare name: string;
+    declare email: string;
+    declare password: string;
+    declare role: 'admin' | 'user' | 'driver' | 'restaurant';
+    declare phoneNumber?: string;
+    declare address?: string;
+    declare readonly createdAt: Date;
+    declare readonly updatedAt: Date;
 }
 
 User.init({
