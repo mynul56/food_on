@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../../core/utils/constants.dart';
+import '../../routes/app_pages.dart';
 import 'auth_service.dart';
 
 class AdminService extends GetConnect {
@@ -12,6 +13,14 @@ class AdminService extends GetConnect {
         request.headers['Authorization'] = 'Bearer $token';
       }
       return request;
+    });
+    httpClient.addResponseModifier<dynamic>((request, response) {
+      if (response.statusCode == 401) {
+        Get.find<AuthService>().logout();
+        Get.offAllNamed(AppRoutes.login);
+        Get.snackbar('Session Expired', 'Please login again');
+      }
+      return response;
     });
     super.onInit();
   }

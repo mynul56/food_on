@@ -36,22 +36,26 @@ class AdminDashboardView extends GetView<AdminController> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildStatsSection(context),
-              const SizedBox(height: 30),
-              Text(
-                'Recent Orders',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+        return RefreshIndicator(
+          onRefresh: controller.fetchData,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildStatsSection(context),
+                const SizedBox(height: 30),
+                Text(
+                  'Recent Orders',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 15),
-              _buildOrdersList(context),
-            ],
+                const SizedBox(height: 15),
+                _buildOrdersList(context),
+              ],
+            ),
           ),
         );
       }),

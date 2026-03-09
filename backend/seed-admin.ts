@@ -18,7 +18,7 @@ async function seed() {
         });
 
         // 2. Restaurants
-        const [r1] = await Restaurant.findOrCreate({
+        const [r1, created1] = await Restaurant.findOrCreate({
             where: { name: 'Burger King' },
             defaults: {
                 name: 'Burger King',
@@ -30,7 +30,7 @@ async function seed() {
             }
         });
 
-        const [r2] = await Restaurant.findOrCreate({
+        const [r2, created2] = await Restaurant.findOrCreate({
             where: { name: 'Pizza Hut' },
             defaults: {
                 name: 'Pizza Hut',
@@ -43,25 +43,29 @@ async function seed() {
         });
 
         // 3. Menu Items
-        await MenuItem.findOrCreate({
-            where: { name: 'Whopper' },
-            defaults: {
-                restaurantId: r1.id,
-                name: 'Whopper',
-                price: 5.99,
-                description: 'Flame-grilled beef burger'
-            }
-        });
+        if (r1 && r1.id) {
+            await MenuItem.findOrCreate({
+                where: { name: 'Whopper', restaurantId: r1.id },
+                defaults: {
+                    restaurantId: r1.id,
+                    name: 'Whopper',
+                    price: 5.99,
+                    description: 'Flame-grilled beef burger'
+                }
+            });
+        }
 
-        await MenuItem.findOrCreate({
-            where: { name: 'Pepperoni Pizza' },
-            defaults: {
-                restaurantId: r2.id,
-                name: 'Pepperoni Pizza',
-                price: 12.99,
-                description: 'Classic pepperoni and cheese'
-            }
-        });
+        if (r2 && r2.id) {
+            await MenuItem.findOrCreate({
+                where: { name: 'Pepperoni Pizza', restaurantId: r2.id },
+                defaults: {
+                    restaurantId: r2.id,
+                    name: 'Pepperoni Pizza',
+                    price: 12.99,
+                    description: 'Classic pepperoni and cheese'
+                }
+            });
+        }
 
         console.log('Seeding completed successfully');
     } catch (error) {
