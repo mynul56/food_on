@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/providers/auth_service.dart';
 import '../../../routes/app_pages.dart';
+import '../../../core/utils/ui_utils.dart';
 
 class AuthController extends GetxController {
   final authService = Get.find<AuthService>();
@@ -14,26 +15,32 @@ class AuthController extends GetxController {
 
   Future<void> login() async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      Get.snackbar('Error', 'Please fill all fields');
+      AppUIUtils.showError('Please fill all fields');
       return;
     }
 
     isLoading.value = true;
-    final result = await authService.login(
-      emailController.text,
-      passwordController.text,
-    );
-    isLoading.value = false;
+    try {
+      final result = await authService.login(
+        emailController.text,
+        passwordController.text,
+      );
 
-    if (result['token'] != null) {
-      final user = result['user'];
-      if (user != null && user['role'] == 'admin') {
-        Get.offAllNamed(AppRoutes.adminDashboard);
+      if (result['token'] != null) {
+        final user = result['user'];
+        AppUIUtils.showSuccess('Welcome back, ${user['name']}!');
+        if (user != null && user['role'] == 'admin') {
+          Get.offAllNamed(AppRoutes.adminDashboard);
+        } else {
+          Get.offAllNamed(AppRoutes.home);
+        }
       } else {
-        Get.offAllNamed(AppRoutes.home);
+        AppUIUtils.showError(result['message'] ?? 'Login failed');
       }
-    } else {
-      Get.snackbar('Error', result['message'] ?? 'Login failed');
+    } catch (e) {
+      AppUIUtils.showError('An unexpected error occurred during login');
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -41,22 +48,28 @@ class AuthController extends GetxController {
     if (emailController.text.isEmpty ||
         passwordController.text.isEmpty ||
         nameController.text.isEmpty) {
-      Get.snackbar('Error', 'Please fill all fields');
+      AppUIUtils.showError('Please fill all fields');
       return;
     }
 
     isLoading.value = true;
-    final result = await authService.register({
-      'name': nameController.text,
-      'email': emailController.text,
-      'password': passwordController.text,
-    });
-    isLoading.value = false;
+    try {
+      final result = await authService.register({
+        'name': nameController.text,
+        'email': emailController.text,
+        'password': passwordController.text,
+      });
 
-    if (result['token'] != null) {
-      Get.offAllNamed(AppRoutes.home);
-    } else {
-      Get.snackbar('Error', result['message'] ?? 'Registration failed');
+      if (result['token'] != null) {
+        AppUIUtils.showSuccess('Registration successful!');
+        Get.offAllNamed(AppRoutes.home);
+      } else {
+        AppUIUtils.showError(result['message'] ?? 'Registration failed');
+      }
+    } catch (e) {
+      AppUIUtils.showError('An unexpected error occurred during registration');
+    } finally {
+      isLoading.value = false;
     }
   }
 }
