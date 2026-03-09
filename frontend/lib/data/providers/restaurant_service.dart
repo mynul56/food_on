@@ -1,9 +1,12 @@
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+
+import '../../../core/utils/constants.dart';
+
 class RestaurantService extends GetxService {
-  final String baseUrl = 'http://localhost:5000/api';
+  final String baseUrl = AppConstants.apiUrl;
 
   Future<List<dynamic>> getRestaurants() async {
     try {

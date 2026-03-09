@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+
 import '../../core/utils/constants.dart';
 import '../../core/utils/ui_utils.dart';
 import '../../routes/app_pages.dart';
@@ -29,17 +30,15 @@ class AdminService extends GetConnect {
   Future<Map<String, dynamic>> getStats() async {
     final response = await get('/admin/stats');
     if (response.status.hasError) {
-      return {'error': response.statusText};
+      return {'error': response.statusText ?? 'Error'};
     }
-    return response.body;
+    return (response.body as Map<String, dynamic>? ?? {});
   }
 
   Future<List<dynamic>> getAllOrders() async {
     final response = await get('/orders/all');
-    if (response.status.hasError) {
-      return [];
-    }
-    return response.body as List<dynamic>;
+    if (response.status.hasError) return [];
+    return response.body as List<dynamic>? ?? [];
   }
 
   Future<bool> updateOrderStatus(String id, String status) async {
@@ -49,10 +48,13 @@ class AdminService extends GetConnect {
 
   Future<List<dynamic>> getAllRestaurants() async {
     final response = await get('/restaurants');
-    if (response.status.hasError) {
-      return [];
-    }
-    return response.body as List<dynamic>;
+    if (response.status.hasError) return [];
+    return response.body as List<dynamic>? ?? [];
+  }
+
+  Future<bool> createRestaurant(Map<String, dynamic> data) async {
+    final response = await post('/restaurants', data);
+    return !response.status.hasError;
   }
 
   Future<bool> deleteRestaurant(String id) async {
