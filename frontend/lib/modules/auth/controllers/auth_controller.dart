@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../core/utils/ui_utils.dart';
 import '../../../data/providers/auth_service.dart';
 import '../../../routes/app_pages.dart';
-import '../../../core/utils/ui_utils.dart';
 
 class AuthController extends GetxController {
   final authService = Get.find<AuthService>();
@@ -10,21 +11,34 @@ class AuthController extends GetxController {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final phoneController = TextEditingController();
 
-  var isLoading = false.obs;
+  final isLoading = false.obs;
+  final obscurePassword = true.obs;
+
+  void toggleObscurePassword() => obscurePassword.toggle();
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    phoneController.dispose();
+    super.onClose();
+  }
 
   Future<void> login() async {
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
       AppUIUtils.showError('Please fill all fields');
       return;
     }
 
     isLoading.value = true;
     try {
-      final result = await authService.login(
-        emailController.text,
-        passwordController.text,
-      );
+      final result = await authService.login(email, password);
 
       if (result['token'] != null) {
         final user = result['user'];
@@ -38,36 +52,43 @@ class AuthController extends GetxController {
         AppUIUtils.showError(result['message'] ?? 'Login failed');
       }
     } catch (e) {
-      AppUIUtils.showError('An unexpected error occurred during login');
+      AppUIUtils.showError('An unexpected error occurred');
     } finally {
       isLoading.value = false;
     }
   }
 
   Future<void> register() async {
-    if (emailController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        nameController.text.isEmpty) {
-      AppUIUtils.showError('Please fill all fields');
+    final name = nameController.text.trim();
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      AppUIUtils.showError('Please fill all required fields');
+      return;
+    }
+    if (password.length < 6) {
+      AppUIUtils.showError('Password must be at least 6 characters');
       return;
     }
 
     isLoading.value = true;
     try {
       final result = await authService.register({
-        'name': nameController.text,
-        'email': emailController.text,
-        'password': passwordController.text,
+        'name': name,
+        'email': email,
+        'password': password,
+        if (phoneController.text.trim().isNotEmpty) 'phoneNumber': phoneController.text.trim(),
       });
 
       if (result['token'] != null) {
-        AppUIUtils.showSuccess('Registration successful!');
+        AppUIUtils.showSuccess('Account created successfully!');
         Get.offAllNamed(AppRoutes.home);
       } else {
         AppUIUtils.showError(result['message'] ?? 'Registration failed');
       }
     } catch (e) {
-      AppUIUtils.showError('An unexpected error occurred during registration');
+      AppUIUtils.showError('An unexpected error occurred');
     } finally {
       isLoading.value = false;
     }
