@@ -10,6 +10,11 @@ class CartView extends GetView<CartController> {
 
   @override
   Widget build(BuildContext context) {
+    // Explicitly find or put the controller in case binding fails
+    if (!Get.isRegistered<CartController>()) {
+      Get.put(CartController(), permanent: true);
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7FA),
       appBar: _buildAppBar(context),
@@ -65,24 +70,32 @@ class CartView extends GetView<CartController> {
         ),
       ),
       actions: [
-        Obx(
-          () => controller.cartItems.isNotEmpty
-              ? TextButton(
-                  onPressed: () => _confirmClear(Get.context!),
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppTheme.primaryColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                  child: const Text(
-                    'Clear',
-                    style: TextStyle(
-                      color: AppTheme.primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink(),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: GestureDetector(
+              onTap: () {
+                if (controller.cartItems.isNotEmpty) {
+                  _confirmClear(context);
+                } else {
+                  Get.snackbar(
+                    'Cart Empty',
+                    'There are no items to clear.',
+                    snackPosition: SnackPosition.BOTTOM,
+                    margin: const EdgeInsets.all(16),
+                  );
+                }
+              },
+              child: const Text(
+                'Clear',
+                style: TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );

@@ -18,20 +18,42 @@ class AuthService extends GetxService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final response = await http.post(
-        Uri.parse('${AppConstants.apiUrl}/auth/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
-      );
+      final response = await http
+          .post(
+            Uri.parse('${AppConstants.apiUrl}/auth/login'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email, 'password': password}),
+          )
+          .timeout(const Duration(seconds: 10));
 
-      final data = jsonDecode(response.body);
-      if (data['token'] != null) {
-        await saveToken(data['token']);
-        await _prefs.setString(AppConstants.userKey, jsonEncode(data['user']));
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        try {
+          final data = jsonDecode(response.body);
+          if (data['token'] != null) {
+            await saveToken(data['token']);
+            await _prefs.setString(
+              AppConstants.userKey,
+              jsonEncode(data['user']),
+            );
+          }
+          return data;
+        } catch (e) {
+          return {'message': 'Invalid server response'};
+        }
+      } else {
+        try {
+          final data = jsonDecode(response.body);
+          return {
+            'message':
+                data['message'] ??
+                'Login failed. Status: ${response.statusCode}',
+          };
+        } catch (e) {
+          return {'message': 'Login failed. Status: ${response.statusCode}'};
+        }
       }
-      return data;
     } catch (e) {
-      return {'message': 'Connection error'};
+      return {'message': 'Connection error: ${e.toString().split('\n')[0]}'};
     }
   }
 
