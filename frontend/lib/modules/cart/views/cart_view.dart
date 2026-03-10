@@ -67,24 +67,18 @@ class CartView extends GetView<CartController> {
       actions: [
         Obx(
           () => controller.cartItems.isNotEmpty
-              ? GestureDetector(
-                  onTap: () => _confirmClear(Get.context!),
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(0, 10, 14, 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFF0ED),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Clear',
-                        style: TextStyle(
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
-                      ),
+              ? TextButton(
+                  onPressed: () => _confirmClear(Get.context!),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppTheme.primaryColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  child: const Text(
+                    'Clear',
+                    style: TextStyle(
+                      color: AppTheme.primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
                     ),
                   ),
                 )

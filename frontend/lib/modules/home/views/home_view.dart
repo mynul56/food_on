@@ -4,8 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../modules/cart/controllers/cart_controller.dart';
+import '../../../modules/notifications/controllers/notifications_controller.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 
@@ -14,34 +17,41 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    final cartController = Get.find<CartController>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7FA),
-      body: CustomScrollView(
-        slivers: [
-          _buildSliverAppBar(context),
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                _buildSearchBar(context),
-                const SizedBox(height: 20),
-                _buildPromoCard(),
-                const SizedBox(height: 24),
-                _buildSectionTitle('Categories'),
-                const SizedBox(height: 14),
-                _buildCategories(),
-                const SizedBox(height: 24),
-                _buildSectionTitle('Popular Near You'),
-                const SizedBox(height: 14),
-              ],
+      body: RefreshIndicator(
+        color: AppTheme.primaryColor,
+        onRefresh: () => controller.fetchRestaurants(refresh: true),
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            _buildSliverAppBar(context),
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  _buildSearchBar(),
+                  const SizedBox(height: 20),
+                  _buildPromoCard(),
+                  const SizedBox(height: 24),
+                  _buildSectionTitle('Categories'),
+                  const SizedBox(height: 14),
+                  _buildCategories(),
+                  const SizedBox(height: 24),
+                  _buildSectionTitle('Popular Near You'),
+                  const SizedBox(height: 14),
+                ],
+              ),
             ),
-          ),
-          _buildRestaurantList(context),
-          const SliverToBoxAdapter(child: SizedBox(height: 30)),
-        ],
+            _buildRestaurantList(),
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+          ],
+        ),
       ),
-      bottomNavigationBar: _buildBottomNav(),
+      bottomNavigationBar: _buildBottomNav(cartController),
     );
   }
 
@@ -52,90 +62,116 @@ class HomeView extends GetView<HomeController> {
       backgroundColor: Colors.white,
       elevation: 0,
       automaticallyImplyLeading: false,
-      expandedHeight: 70,
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          color: Colors.white,
-          padding: const EdgeInsets.fromLTRB(20, 44, 16, 8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+      toolbarHeight: 70,
+      title: FutureBuilder<SharedPreferences>(
+        future: SharedPreferences.getInstance(),
+        builder: (ctx, snap) {
+          String name = 'User';
+          if (snap.hasData) {
+            final userStr = snap.data!.getString('user');
+            if (userStr != null) {
+              try {
+                name = (jsonDecode(userStr) as Map)['name'] ?? 'User';
+              } catch (_) {}
+            }
+          }
+          return Row(
             children: [
               Expanded(
-                child: FutureBuilder<SharedPreferences>(
-                  future: SharedPreferences.getInstance(),
-                  builder: (ctx, snap) {
-                    String name = 'User';
-                    if (snap.hasData) {
-                      final userStr = snap.data!.getString('user');
-                      if (userStr != null) {
-                        try {
-                          name = (jsonDecode(userStr) as Map)['name'] ?? 'User';
-                        } catch (_) {}
-                      }
-                    }
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Hey, ${name.split(' ').first} 👋',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF1E2D3D),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Hey, ${name.split(' ').first} 👋',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E2D3D),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => Get.toNamed(AppRoutes.address),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on_rounded,
+                            size: 13,
+                            color: AppTheme.primaryColor,
                           ),
-                        ),
-                        GestureDetector(
-                          onTap: () => Get.toNamed(AppRoutes.address),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.location_on_rounded,
-                                size: 13,
-                                color: AppTheme.primaryColor,
-                              ),
-                              const SizedBox(width: 3),
-                              Text(
-                                'Set delivery address',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey[500],
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: Colors.grey[400],
-                                ),
-                              ),
-                            ],
+                          const SizedBox(width: 3),
+                          Text(
+                            'Set delivery address',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey[500],
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.grey[400],
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              GestureDetector(
-                onTap: () => Get.toNamed(AppRoutes.notifications),
-                child: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF0ED),
-                    borderRadius: BorderRadius.circular(14),
+              // Notification bell with badge
+              Obx(() {
+                final notifController =
+                    Get.isRegistered<NotificationsController>()
+                    ? Get.find<NotificationsController>()
+                    : null;
+                final count = notifController?.unreadCount.value ?? 0;
+                return GestureDetector(
+                  onTap: () => Get.toNamed(AppRoutes.notifications),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF0ED),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: const Icon(
+                          Icons.notifications_outlined,
+                          color: AppTheme.primaryColor,
+                          size: 22,
+                        ),
+                      ),
+                      if (count > 0)
+                        Positioned(
+                          top: -4,
+                          right: -4,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppTheme.primaryColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              '$count',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                  child: const Icon(
-                    Icons.notifications_outlined,
-                    color: AppTheme.primaryColor,
-                    size: 22,
-                  ),
-                ),
-              ),
+                );
+              }),
             ],
-          ),
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
+  Widget _buildSearchBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
@@ -168,15 +204,15 @@ class HomeView extends GetView<HomeController> {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.all(7),
                 decoration: BoxDecoration(
                   color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(9),
                 ),
                 child: const Icon(
                   Icons.tune_rounded,
                   color: AppTheme.primaryColor,
-                  size: 16,
+                  size: 15,
                 ),
               ),
             ],
@@ -198,10 +234,16 @@ class HomeView extends GetView<HomeController> {
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF1E2D3D).withValues(alpha: 0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
         child: Stack(
           children: [
-            // Background pattern circles
             Positioned(
               right: -20,
               top: -20,
@@ -369,48 +411,97 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildRestaurantList(BuildContext context) {
+  Widget _buildRestaurantList() {
     return Obx(() {
       if (controller.isLoading.value) {
-        return const SliverToBoxAdapter(
-          child: Center(
-            child: Padding(
-              padding: EdgeInsets.all(40),
-              child: CircularProgressIndicator(),
+        return SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (_, __) => _shimmerCard(),
+              childCount: 3,
             ),
           ),
         );
       }
+
+      if (controller.errorMessage.value.isNotEmpty) {
+        return SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.all(40),
+            child: Column(
+              children: [
+                const Text('⚠️', style: TextStyle(fontSize: 48)),
+                const SizedBox(height: 16),
+                Text(
+                  controller.errorMessage.value,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 20),
+                TextButton.icon(
+                  onPressed: () => controller.fetchRestaurants(),
+                  icon: const Icon(
+                    Icons.refresh_rounded,
+                    color: AppTheme.primaryColor,
+                  ),
+                  label: const Text(
+                    'Retry',
+                    style: TextStyle(color: AppTheme.primaryColor),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
       if (controller.restaurants.isEmpty) {
         return SliverToBoxAdapter(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(40),
-              child: Column(
-                children: [
-                  const Text('🍽️', style: TextStyle(fontSize: 60)),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No restaurants found',
-                    style: TextStyle(color: Colors.grey[500], fontSize: 16),
-                  ),
-                ],
-              ),
+          child: Padding(
+            padding: const EdgeInsets.all(40),
+            child: Column(
+              children: [
+                const Text('🍽️', style: TextStyle(fontSize: 52)),
+                const SizedBox(height: 16),
+                Text(
+                  controller.selectedCategory.value == 'All'
+                      ? 'No restaurants available'
+                      : 'No "${controller.selectedCategory.value}" places found',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey[500], fontSize: 15),
+                ),
+              ],
             ),
           ),
         );
       }
+
       return SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
-            (ctx, i) =>
-                _buildRestaurantCard(context, controller.restaurants[i]),
+            (ctx, i) => _buildRestaurantCard(ctx, controller.restaurants[i]),
             childCount: controller.restaurants.length,
           ),
         ),
       );
     });
+  }
+
+  Widget _shimmerCard() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[200]!,
+      highlightColor: Colors.grey[50]!,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 18),
+        height: 260,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+        ),
+      ),
+    );
   }
 
   Widget _buildRestaurantCard(BuildContext context, dynamic r) {
@@ -433,7 +524,6 @@ class HomeView extends GetView<HomeController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(22),
@@ -447,18 +537,35 @@ class HomeView extends GetView<HomeController> {
                     height: 175,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    placeholder: (_, __) => Container(
-                      height: 175,
-                      color: const Color(0xFFF0F0F0),
-                      child: const Center(
-                        child: Icon(Icons.restaurant, color: Colors.grey),
-                      ),
+                    placeholder: (_, __) => Shimmer.fromColors(
+                      baseColor: Colors.grey[200]!,
+                      highlightColor: Colors.grey[50]!,
+                      child: Container(height: 175, color: Colors.white),
                     ),
                     errorWidget: (_, __, ___) => Container(
                       height: 175,
                       color: const Color(0xFFF0F0F0),
                       child: const Center(
                         child: Text('🍴', style: TextStyle(fontSize: 48)),
+                      ),
+                    ),
+                  ),
+                  // Gradient overlay at bottom
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 60,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            Colors.black.withValues(alpha: 0.35),
+                            Colors.transparent,
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -501,7 +608,7 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ),
                   ),
-                  // Free delivery badge if applicable
+                  // Free delivery green badge
                   if ((r['deliveryFee'] ?? 1) == 0)
                     Positioned(
                       top: 12,
@@ -528,7 +635,6 @@ class HomeView extends GetView<HomeController> {
                 ],
               ),
             ),
-            // Info
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
               child: Row(
@@ -551,7 +657,7 @@ class HomeView extends GetView<HomeController> {
                             _chip(
                               Icons.access_time_rounded,
                               r['deliveryTime'] ?? '30 min',
-                              const Color(0xFFFF4B2B),
+                              AppTheme.primaryColor,
                             ),
                             const SizedBox(width: 10),
                             _chip(
@@ -613,7 +719,7 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildBottomNav() {
+  Widget _buildBottomNav(CartController cartController) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -631,11 +737,61 @@ class HomeView extends GetView<HomeController> {
           child: Row(
             children: [
               _navItem(Icons.home_rounded, 'Home', true, () {}),
-              _navItem(
-                Icons.shopping_bag_rounded,
-                'Cart',
-                false,
-                () => Get.toNamed(AppRoutes.cart),
+              // Cart with live badge
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => Get.toNamed(AppRoutes.cart),
+                  behavior: HitTestBehavior.opaque,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Obx(() {
+                          final count = cartController.cartItems.length;
+                          return Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Icon(
+                                Icons.shopping_bag_rounded,
+                                color: Colors.grey[400],
+                                size: 24,
+                              ),
+                              if (count > 0)
+                                Positioned(
+                                  top: -6,
+                                  right: -8,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: const BoxDecoration(
+                                      color: AppTheme.primaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Text(
+                                      '$count',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
+                        }),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Cart',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
               _navItem(
                 Icons.receipt_long_rounded,
