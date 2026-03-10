@@ -1,36 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../routes/app_pages.dart';
+
+import '../../../core/widgets/app_bottom_nav.dart';
 
 class OrderTrackingView extends StatelessWidget {
   const OrderTrackingView({super.key});
 
   static const _steps = [
-    {
-      'icon': Icons.receipt_long_rounded,
-      'label': 'Order Placed',
-      'desc': 'We received your order',
-    },
-    {
-      'icon': Icons.check_circle_outline_rounded,
-      'label': 'Confirmed',
-      'desc': 'Restaurant accepted your order',
-    },
-    {
-      'icon': Icons.soup_kitchen_rounded,
-      'label': 'Preparing',
-      'desc': 'Your food is being prepared',
-    },
-    {
-      'icon': Icons.delivery_dining_rounded,
-      'label': 'On the Way',
-      'desc': 'Rider is heading to you',
-    },
-    {
-      'icon': Icons.home_rounded,
-      'label': 'Delivered',
-      'desc': '🎉 Enjoy your meal!',
-    },
+    {'icon': Icons.receipt_long_rounded, 'label': 'Order Placed', 'desc': 'We received your order'},
+    {'icon': Icons.check_circle_outline_rounded, 'label': 'Confirmed', 'desc': 'Restaurant accepted your order'},
+    {'icon': Icons.soup_kitchen_rounded, 'label': 'Preparing', 'desc': 'Your food is being prepared'},
+    {'icon': Icons.delivery_dining_rounded, 'label': 'On the Way', 'desc': 'Rider is heading to you'},
+    {'icon': Icons.home_rounded, 'label': 'Delivered', 'desc': '🎉 Enjoy your meal!'},
   ];
 
   @override
@@ -51,28 +32,10 @@ class OrderTrackingView extends StatelessWidget {
             pinned: true,
             backgroundColor: Colors.white,
             elevation: 0,
-            leading: GestureDetector(
-              onTap: () => Get.back(),
-              child: Container(
-                margin: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF7F7FA),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.arrow_back_ios_new,
-                  color: Color(0xFF1E2D3D),
-                  size: 18,
-                ),
-              ),
-            ),
+            automaticallyImplyLeading: false,
             title: const Text(
               'Order Tracking',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1E2D3D),
-                fontSize: 18,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1E2D3D), fontSize: 18),
             ),
             centerTitle: true,
           ),
@@ -86,10 +49,7 @@ class OrderTrackingView extends StatelessWidget {
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        theme.primaryColor,
-                        theme.primaryColor.withValues(alpha: 0.75),
-                      ],
+                      colors: [theme.primaryColor, theme.primaryColor.withValues(alpha: 0.75)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -110,10 +70,7 @@ class OrderTrackingView extends StatelessWidget {
                         child: Container(
                           width: 80,
                           height: 80,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.08),
-                          ),
+                          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.08)),
                         ),
                       ),
                       Column(
@@ -127,11 +84,7 @@ class OrderTrackingView extends StatelessWidget {
                                   color: Colors.white.withValues(alpha: 0.2),
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(
-                                  Icons.check_rounded,
-                                  color: Colors.white,
-                                  size: 22,
-                                ),
+                                child: const Icon(Icons.check_rounded, color: Colors.white, size: 22),
                               ),
                               const SizedBox(width: 14),
                               const Column(
@@ -139,19 +92,9 @@ class OrderTrackingView extends StatelessWidget {
                                 children: [
                                   Text(
                                     'Order Confirmed! 🎉',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                                   ),
-                                  Text(
-                                    'Estimated: 30–40 min',
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 13,
-                                    ),
-                                  ),
+                                  Text('Estimated: 30–40 min', style: TextStyle(color: Colors.white70, fontSize: 13)),
                                 ],
                               ),
                             ],
@@ -159,11 +102,7 @@ class OrderTrackingView extends StatelessWidget {
                           const SizedBox(height: 20),
                           _infoRow(Icons.tag_rounded, 'Order ID', '#$orderId'),
                           const SizedBox(height: 10),
-                          _infoRow(
-                            Icons.access_time_rounded,
-                            'Placed',
-                            'Just now',
-                          ),
+                          _infoRow(Icons.access_time_rounded, 'Placed', 'Just now'),
                         ],
                       ),
                     ],
@@ -180,11 +119,7 @@ class OrderTrackingView extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
-                      ),
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 16, offset: const Offset(0, 4)),
                     ],
                   ),
                   child: Column(
@@ -192,11 +127,7 @@ class OrderTrackingView extends StatelessWidget {
                     children: [
                       const Text(
                         'Live Tracking',
-                        style: TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E2D3D),
-                        ),
+                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF1E2D3D)),
                       ),
                       const SizedBox(height: 20),
                       ...List.generate(_steps.length, (i) {
@@ -227,11 +158,7 @@ class OrderTrackingView extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
-                      ),
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 16, offset: const Offset(0, 4)),
                     ],
                   ),
                   child: Row(
@@ -242,18 +169,11 @@ class OrderTrackingView extends StatelessWidget {
                         height: 60,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [
-                              theme.primaryColor.withValues(alpha: 0.15),
-                              theme.primaryColor.withValues(alpha: 0.05),
-                            ],
+                            colors: [theme.primaryColor.withValues(alpha: 0.15), theme.primaryColor.withValues(alpha: 0.05)],
                           ),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          Icons.delivery_dining_rounded,
-                          color: theme.primaryColor,
-                          size: 30,
-                        ),
+                        child: Icon(Icons.delivery_dining_rounded, color: theme.primaryColor, size: 30),
                       ),
                       const SizedBox(width: 16),
                       const Expanded(
@@ -262,36 +182,16 @@ class OrderTrackingView extends StatelessWidget {
                           children: [
                             Text(
                               'Robert Fox',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Color(0xFF1E2D3D),
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1E2D3D)),
                             ),
                             SizedBox(height: 3),
-                            Text(
-                              'Your Delivery Partner',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                              ),
-                            ),
+                            Text('Your Delivery Partner', style: TextStyle(color: Colors.grey, fontSize: 12)),
                             SizedBox(height: 5),
                             Row(
                               children: [
-                                Icon(
-                                  Icons.star_rounded,
-                                  color: Colors.amber,
-                                  size: 13,
-                                ),
+                                Icon(Icons.star_rounded, color: Colors.amber, size: 13),
                                 SizedBox(width: 3),
-                                Text(
-                                  '4.9 · 250+ deliveries',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                  ),
-                                ),
+                                Text('4.9 · 250+ deliveries', style: TextStyle(color: Colors.grey, fontSize: 12)),
                               ],
                             ),
                           ],
@@ -308,19 +208,13 @@ class OrderTrackingView extends StatelessWidget {
                             borderRadius: BorderRadius.circular(14),
                             boxShadow: [
                               BoxShadow(
-                                color: theme.primaryColor.withValues(
-                                  alpha: 0.4,
-                                ),
+                                color: theme.primaryColor.withValues(alpha: 0.4),
                                 blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),
                             ],
                           ),
-                          child: const Icon(
-                            Icons.phone_rounded,
-                            color: Colors.white,
-                            size: 20,
-                          ),
+                          child: const Icon(Icons.phone_rounded, color: Colors.white, size: 20),
                         ),
                       ),
                     ],
@@ -335,30 +229,7 @@ class OrderTrackingView extends StatelessWidget {
       ),
 
       // --- Bottom action ---
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-        color: Colors.transparent,
-        child: ElevatedButton(
-          onPressed: () => Get.offAllNamed(AppRoutes.home),
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size.fromHeight(56),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.home_rounded, size: 20),
-              SizedBox(width: 8),
-              Text(
-                'Back to Home',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-      ),
+      bottomNavigationBar: const AppBottomNav(currentIndex: 2),
     );
   }
 
@@ -367,17 +238,10 @@ class OrderTrackingView extends StatelessWidget {
       children: [
         Icon(icon, color: Colors.white70, size: 14),
         const SizedBox(width: 6),
-        Text(
-          '$label: ',
-          style: const TextStyle(color: Colors.white70, fontSize: 12),
-        ),
+        Text('$label: ', style: const TextStyle(color: Colors.white70, fontSize: 12)),
         Text(
           value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
         ),
       ],
     );
@@ -438,16 +302,9 @@ class _TimelineStep extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: isDone
-                        ? theme.primaryColor
-                        : const Color(0xFFF0F0F0),
+                    color: isDone ? theme.primaryColor : const Color(0xFFF0F0F0),
                     shape: BoxShape.circle,
-                    border: isActive
-                        ? Border.all(
-                            color: theme.primaryColor.withValues(alpha: 0.3),
-                            width: 4,
-                          )
-                        : null,
+                    border: isActive ? Border.all(color: theme.primaryColor.withValues(alpha: 0.3), width: 4) : null,
                     boxShadow: isDone
                         ? [
                             BoxShadow(
@@ -472,10 +329,7 @@ class _TimelineStep extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: isDone
                             ? LinearGradient(
-                                colors: [
-                                  theme.primaryColor,
-                                  theme.primaryColor.withValues(alpha: 0.3),
-                                ],
+                                colors: [theme.primaryColor, theme.primaryColor.withValues(alpha: 0.3)],
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                               )
@@ -502,16 +356,11 @@ class _TimelineStep extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      color: isDone
-                          ? const Color(0xFF1E2D3D)
-                          : Colors.grey[400],
+                      color: isDone ? const Color(0xFF1E2D3D) : Colors.grey[400],
                     ),
                   ),
                   const SizedBox(height: 3),
-                  Text(
-                    desc,
-                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
-                  ),
+                  Text(desc, style: TextStyle(color: Colors.grey[500], fontSize: 12)),
                 ],
               ),
             ),
@@ -521,15 +370,8 @@ class _TimelineStep extends StatelessWidget {
               padding: const EdgeInsets.only(top: 10, right: 4),
               child: Container(
                 padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: theme.primaryColor.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.done_rounded,
-                  color: theme.primaryColor,
-                  size: 14,
-                ),
+                decoration: BoxDecoration(color: theme.primaryColor.withValues(alpha: 0.1), shape: BoxShape.circle),
+                child: Icon(Icons.done_rounded, color: theme.primaryColor, size: 14),
               ),
             ),
         ],

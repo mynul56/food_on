@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/utils/constants.dart';
@@ -17,10 +18,12 @@ class ProfileController extends GetxController {
 
   var isLoading = false.obs;
   var isSaving = false.obs;
+  var isUploadingPicture = false.obs;
   var userName = ''.obs;
   var userEmail = ''.obs;
   var userPhone = ''.obs;
   var userRole = ''.obs;
+  var userProfilePicture = ''.obs;
 
   @override
   void onInit() {
@@ -46,6 +49,7 @@ class ProfileController extends GetxController {
       userEmail.value = user['email'] ?? '';
       userPhone.value = user['phone'] ?? '';
       userRole.value = user['role'] ?? 'user';
+      userProfilePicture.value = user['profilePicture'] ?? '';
       nameController.text = userName.value;
       emailController.text = userEmail.value;
       phoneController.text = userPhone.value;
@@ -67,6 +71,7 @@ class ProfileController extends GetxController {
         userEmail.value = data['email'] ?? '';
         userPhone.value = data['phone'] ?? '';
         userRole.value = data['role'] ?? 'user';
+        userProfilePicture.value = data['profilePicture'] ?? '';
         nameController.text = userName.value;
         emailController.text = userEmail.value;
         phoneController.text = userPhone.value;
@@ -85,14 +90,8 @@ class ProfileController extends GetxController {
     try {
       final response = await http.put(
         Uri.parse('${AppConstants.apiUrl}/auth/profile'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'name': nameController.text.trim(),
-          'phone': phoneController.text.trim(),
-        }),
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
+        body: jsonEncode({'name': nameController.text.trim(), 'phone': phoneController.text.trim()}),
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
@@ -150,5 +149,54 @@ class ProfileController extends GetxController {
         Get.offAllNamed('/login');
       },
     );
+  }
+
+  Future<void> pickAndUploadProfilePicture() async {
+    final token = _authService.token;
+    if (token == null) return;
+
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+    if (picked == null) return;
+
+    isUploadingPicture.value = true;
+    try {
+      final uri = Uri.parse('${AppConstants.apiUrl}/upload/profile-picture');
+      final request = http.MultipartRequest('POST', uri)
+        ..headers['Authorization'] = 'Bearer $token'
+        ..files.add(await http.MultipartFile.fromPath('image', picked.path));
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        userProfilePicture.value = data['profilePicture'] ?? '';
+        final prefs = await SharedPreferences.getInstance();
+        final userJson = prefs.getString(AppConstants.userKey);
+        if (userJson != null) {
+          final user = jsonDecode(userJson) as Map<String, dynamic>;
+          user['profilePicture'] = userProfilePicture.value;
+          await prefs.setString(AppConstants.userKey, jsonEncode(user));
+        }
+        Get.snackbar(
+          'Success',
+          'Profile picture updated!',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFF1E2D3D),
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(16),
+        );
+      }
+    } catch (_) {
+      Get.snackbar(
+        'Error',
+        'Failed to upload picture.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+      );
+    } finally {
+      isUploadingPicture.value = false;
+    }
   }
 }

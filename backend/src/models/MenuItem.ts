@@ -1,47 +1,60 @@
-import { Model, DataTypes } from 'sequelize';
-import { sequelize } from '../config/database.js';
+import { DataTypes, Model } from "sequelize";
+import { sequelize } from "../config/database.js";
 
 class MenuItem extends Model {
-    public id!: number;
-    public restaurantId!: number;
-    public categoryId?: number;
-    public name!: string;
-    public description?: string;
-    public price!: number;
-    public imageUrl?: string;
-    public isAvailable!: boolean;
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
+  public id!: number;
+  public restaurantId!: number;
+  public categoryId?: number;
+  public name!: string;
+  public description?: string;
+  public price!: number;
+  public imageUrl?: string;
+  public isAvailable!: boolean;
+  public category?: string;
+  public isVeg?: boolean;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
 }
 
-MenuItem.init({
+MenuItem.init(
+  {
     id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
     restaurantId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     categoryId: DataTypes.INTEGER,
     name: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     description: DataTypes.TEXT,
     price: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
+      type: DataTypes.FLOAT,
+      allowNull: false,
     },
     imageUrl: DataTypes.STRING,
     isAvailable: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
-}, {
+    category: {
+      type: DataTypes.STRING,
+      defaultValue: "Main Course",
+    },
+    isVeg: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+  },
+  {
     sequelize,
-    modelName: 'MenuItem',
-});
+    modelName: "MenuItem",
+  },
+);
 
 export default MenuItem;

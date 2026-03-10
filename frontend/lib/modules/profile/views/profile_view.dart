@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/app_bottom_nav.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/profile_controller.dart';
 
@@ -12,6 +14,7 @@ class ProfileView extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7FA),
+      bottomNavigationBar: const AppBottomNav(currentIndex: 3),
       body: CustomScrollView(
         slivers: [
           _buildHeader(context),
@@ -59,36 +62,22 @@ class ProfileView extends GetView<ProfileController> {
                               width: double.infinity,
                               height: 52,
                               child: ElevatedButton(
-                                onPressed: controller.isSaving.value
-                                    ? null
-                                    : controller.updateProfile,
+                                onPressed: controller.isSaving.value ? null : controller.updateProfile,
                                 style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                                 ),
                                 child: controller.isSaving.value
                                     ? const SizedBox(
                                         width: 22,
                                         height: 22,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2.5,
-                                          color: Colors.white,
-                                        ),
+                                        child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
                                       )
                                     : const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Icon(Icons.save_rounded, size: 18),
                                           SizedBox(width: 8),
-                                          Text(
-                                            'Save Changes',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15,
-                                            ),
-                                          ),
+                                          Text('Save Changes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                                         ],
                                       ),
                               ),
@@ -182,26 +171,14 @@ class ProfileView extends GetView<ProfileController> {
                       height: 54,
                       child: OutlinedButton.icon(
                         onPressed: controller.logout,
-                        icon: const Icon(
-                          Icons.logout_rounded,
-                          color: AppTheme.primaryColor,
-                        ),
+                        icon: const Icon(Icons.logout_rounded, color: AppTheme.primaryColor),
                         label: const Text(
                           'Sign Out',
-                          style: TextStyle(
-                            color: AppTheme.primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
+                          style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, fontSize: 15),
                         ),
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: AppTheme.primaryColor,
-                            width: 1.5,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
+                          side: const BorderSide(color: AppTheme.primaryColor, width: 1.5),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         ),
                       ),
                     ),
@@ -220,21 +197,7 @@ class ProfileView extends GetView<ProfileController> {
       expandedHeight: 200,
       pinned: true,
       backgroundColor: AppTheme.secondaryColor,
-      leading: GestureDetector(
-        onTap: () => Get.back(),
-        child: Container(
-          margin: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.white,
-            size: 18,
-          ),
-        ),
-      ),
+      automaticallyImplyLeading: false,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           decoration: const BoxDecoration(
@@ -252,10 +215,7 @@ class ProfileView extends GetView<ProfileController> {
                 child: Container(
                   width: 160,
                   height: 160,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.04),
-                  ),
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.04)),
                 ),
               ),
               Positioned(
@@ -264,10 +224,7 @@ class ProfileView extends GetView<ProfileController> {
                 child: Container(
                   width: 100,
                   height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.04),
-                  ),
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.04)),
                 ),
               ),
               Center(
@@ -276,74 +233,94 @@ class ProfileView extends GetView<ProfileController> {
                   children: [
                     const SizedBox(height: 20),
                     Obx(
-                      () => Container(
-                        width: 72,
-                        height: 72,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              AppTheme.primaryColor,
-                              AppTheme.primaryLight,
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.primaryColor.withValues(
-                                alpha: 0.4,
+                      () => GestureDetector(
+                        onTap: controller.pickAndUploadProfilePicture,
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [AppTheme.primaryColor, AppTheme.primaryLight],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppTheme.primaryColor.withValues(alpha: 0.4),
+                                    blurRadius: 14,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                              blurRadius: 14,
-                              offset: const Offset(0, 4),
+                              child: controller.userProfilePicture.value.isNotEmpty
+                                  ? ClipOval(
+                                      child: CachedNetworkImage(
+                                        imageUrl: controller.userProfilePicture.value,
+                                        fit: BoxFit.cover,
+                                        placeholder: (_, __) => const CircularProgressIndicator(),
+                                        errorWidget: (_, __, ___) => Center(
+                                          child: Text(
+                                            controller.userName.value.isNotEmpty
+                                                ? controller.userName.value[0].toUpperCase()
+                                                : 'U',
+                                            style: const TextStyle(
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Center(
+                                      child: Text(
+                                        controller.userName.value.isNotEmpty
+                                            ? controller.userName.value[0].toUpperCase()
+                                            : 'U',
+                                        style: const TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                width: 26,
+                                height: 26,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: AppTheme.primaryColor, width: 2),
+                                ),
+                                child: const Icon(Icons.camera_alt_rounded, size: 14, color: AppTheme.primaryColor),
+                              ),
                             ),
                           ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            controller.userName.value.isNotEmpty
-                                ? controller.userName.value[0].toUpperCase()
-                                : 'U',
-                            style: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 12),
                     Obx(
                       () => Text(
-                        controller.userName.value.isNotEmpty
-                            ? controller.userName.value
-                            : 'User',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        controller.userName.value.isNotEmpty ? controller.userName.value : 'User',
+                        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Obx(
                       () => Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                        decoration: BoxDecoration(color: AppTheme.primaryColor, borderRadius: BorderRadius.circular(20)),
                         child: Text(
                           controller.userRole.value.capitalize ?? 'User',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -360,11 +337,7 @@ class ProfileView extends GetView<ProfileController> {
   Widget _sectionLabel(String label) {
     return Text(
       label,
-      style: const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF1E2D3D),
-      ),
+      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF1E2D3D)),
     );
   }
 
@@ -374,13 +347,7 @@ class ProfileView extends GetView<ProfileController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 16, offset: const Offset(0, 4))],
       ),
       child: child,
     );
@@ -421,19 +388,13 @@ class ProfileView extends GetView<ProfileController> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: AppTheme.primaryColor,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: AppTheme.primaryColor, width: 1.5),
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: Colors.grey[100]!),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 14,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       ),
     );
   }
@@ -455,10 +416,7 @@ class ProfileView extends GetView<ProfileController> {
             Container(
               width: 42,
               height: 42,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(13),
-              ),
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(13)),
               child: Icon(icon, color: color, size: 20),
             ),
             const SizedBox(width: 14),
@@ -468,31 +426,17 @@ class ProfileView extends GetView<ProfileController> {
                 children: [
                   Text(
                     label,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1E2D3D),
-                    ),
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF1E2D3D)),
                   ),
                   const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 11, color: Colors.grey[400]),
-                  ),
+                  Text(subtitle, style: TextStyle(fontSize: 11, color: Colors.grey[400])),
                 ],
               ),
             ),
             Container(
               padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                Icons.chevron_right_rounded,
-                color: Colors.grey[400],
-                size: 16,
-              ),
+              decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(8)),
+              child: Icon(Icons.chevron_right_rounded, color: Colors.grey[400], size: 16),
             ),
           ],
         ),
