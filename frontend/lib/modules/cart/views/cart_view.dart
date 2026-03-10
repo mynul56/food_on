@@ -75,7 +75,7 @@ class CartView extends GetView<CartController> {
             padding: const EdgeInsets.only(right: 16),
             child: GestureDetector(
               onTap: () {
-                if (controller.cartItems.isNotEmpty) {
+                if (controller.cartItems.length > 0) {
                   _confirmClear(context);
                 } else {
                   Get.snackbar(
