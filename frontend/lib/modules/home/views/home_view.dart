@@ -15,7 +15,7 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: const Color(0xFFF7F7FA),
       body: CustomScrollView(
         slivers: [
           _buildSliverAppBar(context),
@@ -23,105 +23,115 @@ class HomeView extends GetView<HomeController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 _buildSearchBar(context),
+                const SizedBox(height: 20),
+                _buildPromoCard(),
                 const SizedBox(height: 24),
-                _buildPromoCard(context),
+                _buildSectionTitle('Categories'),
+                const SizedBox(height: 14),
+                _buildCategories(),
                 const SizedBox(height: 24),
-                _buildSectionTitle(context, 'Categories'),
-                const SizedBox(height: 12),
-                _buildCategories(context),
-                const SizedBox(height: 24),
-                _buildSectionTitle(context, 'Popular Near You'),
-                const SizedBox(height: 12),
+                _buildSectionTitle('Popular Near You'),
+                const SizedBox(height: 14),
               ],
             ),
           ),
           _buildRestaurantList(context),
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
+          const SliverToBoxAdapter(child: SizedBox(height: 30)),
         ],
       ),
-      bottomNavigationBar: _buildBottomNav(context),
+      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
   Widget _buildSliverAppBar(BuildContext context) {
     return SliverAppBar(
       floating: true,
+      snap: true,
       backgroundColor: Colors.white,
       elevation: 0,
       automaticallyImplyLeading: false,
-      title: FutureBuilder<SharedPreferences>(
-        future: SharedPreferences.getInstance(),
-        builder: (ctx, snap) {
-          String name = 'User';
-          if (snap.hasData) {
-            final userStr = snap.data!.getString('user');
-            if (userStr != null) {
-              try {
-                name = (jsonDecode(userStr) as Map)['name'] ?? 'User';
-              } catch (_) {}
-            }
-          }
-          return Row(
+      expandedHeight: 70,
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          color: Colors.white,
+          padding: const EdgeInsets.fromLTRB(20, 44, 16, 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Hello, ${name.split(' ').first} 👋',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.secondaryColor,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => Get.toNamed(AppRoutes.address),
-                    child: Row(
+              Expanded(
+                child: FutureBuilder<SharedPreferences>(
+                  future: SharedPreferences.getInstance(),
+                  builder: (ctx, snap) {
+                    String name = 'User';
+                    if (snap.hasData) {
+                      final userStr = snap.data!.getString('user');
+                      if (userStr != null) {
+                        try {
+                          name = (jsonDecode(userStr) as Map)['name'] ?? 'User';
+                        } catch (_) {}
+                      }
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.location_on,
-                          size: 14,
-                          color: AppTheme.primaryColor,
-                        ),
-                        const SizedBox(width: 2),
                         Text(
-                          'Set delivery address',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
+                          'Hey, ${name.split(' ').first} 👋',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1E2D3D),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => Get.toNamed(AppRoutes.address),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.location_on_rounded,
+                                size: 13,
                                 color: AppTheme.primaryColor,
-                                decoration: TextDecoration.underline,
                               ),
+                              const SizedBox(width: 3),
+                              Text(
+                                'Set delivery address',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey[500],
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.grey[400],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
-                    ),
+                    );
+                  },
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Get.toNamed(AppRoutes.notifications),
+                child: Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF0ED),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                ],
+                  child: const Icon(
+                    Icons.notifications_outlined,
+                    color: AppTheme.primaryColor,
+                    size: 22,
+                  ),
+                ),
               ),
             ],
-          );
-        },
-      ),
-      actions: [
-        GestureDetector(
-          onTap: () => Get.toNamed(AppRoutes.notifications),
-          child: Container(
-            margin: const EdgeInsets.only(right: 16),
-            decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: const Padding(
-              padding: EdgeInsets.all(10),
-              child: Icon(
-                Icons.notifications_outlined,
-                color: AppTheme.primaryColor,
-              ),
-            ),
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -131,29 +141,43 @@ class HomeView extends GetView<HomeController> {
       child: GestureDetector(
         onTap: () => Get.toNamed(AppRoutes.search),
         child: Container(
-          height: 52,
+          height: 54,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFEEEEEE)),
+            borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 18),
           child: Row(
             children: [
-              const Icon(Icons.search, color: Colors.grey, size: 22),
-              const SizedBox(width: 10),
+              const Icon(
+                Icons.search_rounded,
+                color: AppTheme.primaryColor,
+                size: 22,
+              ),
+              const SizedBox(width: 12),
               Text(
                 'Search restaurants, dishes...',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: Colors.grey[400]),
+                style: TextStyle(color: Colors.grey[400], fontSize: 14),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.tune_rounded,
+                  color: AppTheme.primaryColor,
+                  size: 16,
+                ),
               ),
             ],
           ),
@@ -162,90 +186,135 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildPromoCard(BuildContext context) {
+  Widget _buildPromoCard() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
-        height: 160,
+        height: 155,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [AppTheme.primaryColor, AppTheme.primaryLight],
+            colors: [Color(0xFF1E2D3D), Color(0xFF2D4A6E)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
         ),
-        padding: const EdgeInsets.all(20),
-        child: Row(
+        child: Stack(
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+            // Background pattern circles
+            Positioned(
+              right: -20,
+              top: -20,
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.05),
+                ),
+              ),
+            ),
+            Positioned(
+              right: 30,
+              bottom: -30,
+              child: Container(
+                width: 90,
+                height: 90,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.05),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(22),
+              child: Row(
                 children: [
-                  const Text(
-                    'Special Offer 🎉',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            '🔥  Special Offer',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Get 20% off\nyour first order!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 19,
+                            fontWeight: FontWeight.bold,
+                            height: 1.25,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        GestureDetector(
+                          onTap: () => Get.toNamed(AppRoutes.search),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 9,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryColor,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Text(
+                              'Order Now →',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'Get 20% off\nyour first order!',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      height: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Text(
-                      'Order Now',
-                      style: TextStyle(
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
+                  const Text('🍕', style: TextStyle(fontSize: 72)),
                 ],
               ),
             ),
-            const Text('🍕', style: TextStyle(fontSize: 70)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title) {
+  Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Text(
         title,
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+        style: const TextStyle(
+          fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: AppTheme.secondaryColor,
+          color: Color(0xFF1E2D3D),
         ),
       ),
     );
   }
 
-  Widget _buildCategories(BuildContext context) {
+  Widget _buildCategories() {
     return SizedBox(
-      height: 88,
+      height: 92,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -259,33 +328,29 @@ class HomeView extends GetView<HomeController> {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 margin: const EdgeInsets.only(right: 12),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
                 decoration: BoxDecoration(
                   color: isSelected ? AppTheme.primaryColor : Colors.white,
-                  borderRadius: BorderRadius.circular(50),
-                  border: Border.all(
-                    color: isSelected
-                        ? AppTheme.primaryColor
-                        : const Color(0xFFEEEEEE),
-                  ),
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: AppTheme.primaryColor.withValues(alpha: 0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                        ]
-                      : [],
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isSelected
+                          ? AppTheme.primaryColor.withValues(alpha: 0.35)
+                          : Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 10,
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(cat['icon']!, style: const TextStyle(fontSize: 22)),
-                    const SizedBox(height: 4),
+                    Text(cat['icon']!, style: const TextStyle(fontSize: 24)),
+                    const SizedBox(height: 5),
                     Text(
                       cat['name']!,
                       style: TextStyle(
@@ -327,9 +392,7 @@ class HomeView extends GetView<HomeController> {
                   const SizedBox(height: 16),
                   Text(
                     'No restaurants found',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleMedium?.copyWith(color: Colors.grey),
+                    style: TextStyle(color: Colors.grey[500], fontSize: 16),
                   ),
                 ],
               ),
@@ -341,8 +404,8 @@ class HomeView extends GetView<HomeController> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
-            (ctx, index) =>
-                _buildRestaurantCard(context, controller.restaurants[index]),
+            (ctx, i) =>
+                _buildRestaurantCard(context, controller.restaurants[i]),
             childCount: controller.restaurants.length,
           ),
         ),
@@ -350,54 +413,56 @@ class HomeView extends GetView<HomeController> {
     });
   }
 
-  Widget _buildRestaurantCard(BuildContext context, dynamic restaurant) {
+  Widget _buildRestaurantCard(BuildContext context, dynamic r) {
     return GestureDetector(
-      onTap: () => Get.toNamed(
-        AppRoutes.restaurantDetails,
-        arguments: {'id': restaurant['id']},
-      ),
+      onTap: () =>
+          Get.toNamed(AppRoutes.restaurantDetails, arguments: {'id': r['id']}),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: const EdgeInsets.only(bottom: 18),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(22),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: Colors.black.withValues(alpha: 0.07),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Image
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
+                top: Radius.circular(22),
               ),
               child: Stack(
                 children: [
                   CachedNetworkImage(
                     imageUrl:
-                        restaurant['imageUrl'] ??
+                        r['imageUrl'] ??
                         'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80',
-                    height: 170,
+                    height: 175,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      height: 170,
-                      color: Colors.grey[100],
-                      child: const Center(child: CircularProgressIndicator()),
+                    placeholder: (_, __) => Container(
+                      height: 175,
+                      color: const Color(0xFFF0F0F0),
+                      child: const Center(
+                        child: Icon(Icons.restaurant, color: Colors.grey),
+                      ),
                     ),
-                    errorWidget: (context, url, error) => Container(
-                      height: 170,
-                      color: Colors.grey[100],
+                    errorWidget: (_, __, ___) => Container(
+                      height: 175,
+                      color: const Color(0xFFF0F0F0),
                       child: const Center(
                         child: Text('🍴', style: TextStyle(fontSize: 48)),
                       ),
                     ),
                   ),
+                  // Rating badge
                   Positioned(
                     top: 12,
                     right: 12,
@@ -408,10 +473,10 @@ class HomeView extends GetView<HomeController> {
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: Colors.black.withValues(alpha: 0.12),
                             blurRadius: 8,
                           ),
                         ],
@@ -419,10 +484,14 @@ class HomeView extends GetView<HomeController> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 14),
+                          const Icon(
+                            Icons.star_rounded,
+                            color: Colors.amber,
+                            size: 14,
+                          ),
                           const SizedBox(width: 3),
                           Text(
-                            (restaurant['rating'] ?? 0.0).toString(),
+                            (r['rating'] ?? 4.5).toString(),
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
@@ -432,35 +501,83 @@ class HomeView extends GetView<HomeController> {
                       ),
                     ),
                   ),
+                  // Free delivery badge if applicable
+                  if ((r['deliveryFee'] ?? 1) == 0)
+                    Positioned(
+                      top: 12,
+                      left: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.successColor,
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: const Text(
+                          'Free Delivery',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
+            // Info
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  Text(
-                    restaurant['name'] ?? 'Restaurant',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          r['name'] ?? 'Restaurant',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Color(0xFF1E2D3D),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            _chip(
+                              Icons.access_time_rounded,
+                              r['deliveryTime'] ?? '30 min',
+                              const Color(0xFFFF4B2B),
+                            ),
+                            const SizedBox(width: 10),
+                            _chip(
+                              Icons.delivery_dining_rounded,
+                              (r['deliveryFee'] ?? 1) == 0
+                                  ? 'Free'
+                                  : '\$${r['deliveryFee']}',
+                              Colors.green,
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      _buildInfoChip(
-                        Icons.access_time_outlined,
-                        restaurant['deliveryTime'] ?? '30 min',
-                      ),
-                      const SizedBox(width: 12),
-                      _buildInfoChip(
-                        Icons.delivery_dining_outlined,
-                        (restaurant['deliveryFee'] ?? 0) == 0
-                            ? 'Free delivery'
-                            : '\$${restaurant['deliveryFee']} delivery',
-                      ),
-                    ],
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF0ED),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: AppTheme.primaryColor,
+                      size: 16,
+                    ),
                   ),
                 ],
               ),
@@ -471,58 +588,113 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildInfoChip(IconData icon, String label) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 14, color: Colors.grey[500]),
-        const SizedBox(width: 4),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-      ],
+  Widget _chip(IconData icon, String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildBottomNav(BuildContext context) {
+  Widget _buildBottomNav() {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Colors.black.withValues(alpha: 0.07),
             blurRadius: 20,
             offset: const Offset(0, -4),
           ),
         ],
       ),
-      child: BottomNavigationBar(
-        currentIndex: 0,
-        onTap: (index) {
-          if (index == 1) Get.toNamed(AppRoutes.cart);
-          if (index == 2) Get.toNamed(AppRoutes.orderTracking);
-          if (index == 3) Get.toNamed(AppRoutes.profile);
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          child: Row(
+            children: [
+              _navItem(Icons.home_rounded, 'Home', true, () {}),
+              _navItem(
+                Icons.shopping_bag_rounded,
+                'Cart',
+                false,
+                () => Get.toNamed(AppRoutes.cart),
+              ),
+              _navItem(
+                Icons.receipt_long_rounded,
+                'Orders',
+                false,
+                () => Get.toNamed(AppRoutes.orderTracking),
+              ),
+              _navItem(
+                Icons.person_rounded,
+                'Profile',
+                false,
+                () => Get.toNamed(AppRoutes.profile),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            activeIcon: Icon(Icons.shopping_cart),
-            label: 'Cart',
+        ),
+      ),
+    );
+  }
+
+  Widget _navItem(
+    IconData icon,
+    String label,
+    bool active,
+    VoidCallback onTap,
+  ) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: active
+                ? AppTheme.primaryColor.withValues(alpha: 0.08)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(14),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long_outlined),
-            activeIcon: Icon(Icons.receipt_long),
-            label: 'Orders',
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                color: active ? AppTheme.primaryColor : Colors.grey[400],
+                size: 24,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: active ? FontWeight.bold : FontWeight.normal,
+                  color: active ? AppTheme.primaryColor : Colors.grey[400],
+                ),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        ),
       ),
     );
   }
