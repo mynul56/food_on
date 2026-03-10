@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../routes/app_pages.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -35,42 +36,54 @@ class ProfileView extends GetView<ProfileController> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Obx(() => CircleAvatar(
-                          radius: 44,
-                          backgroundColor: theme.primaryColor,
-                          child: Text(
-                            controller.userName.value.isNotEmpty
-                                ? controller.userName.value[0].toUpperCase()
-                                : 'U',
-                            style: const TextStyle(
-                              fontSize: 36,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )),
-                    const SizedBox(height: 12),
-                    Obx(() => Text(
-                          controller.userName.value,
+                    Obx(
+                      () => CircleAvatar(
+                        radius: 44,
+                        backgroundColor: theme.primaryColor,
+                        child: Text(
+                          controller.userName.value.isNotEmpty
+                              ? controller.userName.value[0].toUpperCase()
+                              : 'U',
                           style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
+                            fontSize: 36,
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
-                        )),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Obx(
+                      () => Text(
+                        controller.userName.value,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Obx(() => Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                          margin: const EdgeInsets.only(bottom: 20),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(20),
+                    Obx(
+                      () => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 4,
+                        ),
+                        margin: const EdgeInsets.only(bottom: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          controller.userRole.value.capitalize ?? 'User',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
                           ),
-                          child: Text(
-                            controller.userRole.value.capitalize ?? 'User',
-                            style: const TextStyle(color: Colors.white70, fontSize: 12),
-                          ),
-                        )),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -116,33 +129,38 @@ class ProfileView extends GetView<ProfileController> {
                             keyboardType: TextInputType.phone,
                           ),
                           const SizedBox(height: 20),
-                          Obx(() => SizedBox(
-                                width: double.infinity,
-                                height: 50,
-                                child: ElevatedButton(
-                                  onPressed: controller.isSaving.value
-                                      ? null
-                                      : controller.updateProfile,
-                                  style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
+                          Obx(
+                            () => SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                onPressed: controller.isSaving.value
+                                    ? null
+                                    : controller.updateProfile,
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
                                   ),
-                                  child: controller.isSaving.value
-                                      ? const SizedBox(
-                                          width: 22,
-                                          height: 22,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2.5,
-                                            color: Colors.white,
-                                          ),
-                                        )
-                                      : const Text(
-                                          'Save Changes',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                        ),
                                 ),
-                              )),
+                                child: controller.isSaving.value
+                                    ? const SizedBox(
+                                        width: 22,
+                                        height: 22,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const Text(
+                                        'Save Changes',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -158,25 +176,31 @@ class ProfileView extends GetView<ProfileController> {
                             icon: Icons.shopping_bag_outlined,
                             label: 'My Orders',
                             color: Colors.blue,
-                            onTap: () {},
+                            onTap: () => Get.toNamed(AppRoutes.orderTracking),
                           ),
                           _actionTile(
                             icon: Icons.location_on_outlined,
                             label: 'Saved Addresses',
                             color: Colors.green,
-                            onTap: () {},
+                            onTap: () => Get.toNamed(AppRoutes.address),
                           ),
                           _actionTile(
                             icon: Icons.notifications_outlined,
                             label: 'Notifications',
                             color: Colors.orange,
-                            onTap: () {},
+                            onTap: () => Get.toNamed(AppRoutes.notifications),
                           ),
                           _actionTile(
                             icon: Icons.help_outline,
                             label: 'Help & Support',
                             color: Colors.purple,
-                            onTap: () {},
+                            onTap: () => Get.snackbar(
+                              'Help & Support',
+                              'Email us at support@foodon.app',
+                              snackPosition: SnackPosition.BOTTOM,
+                              margin: const EdgeInsets.all(16),
+                              borderRadius: 12,
+                            ),
                           ),
                         ],
                       ),
@@ -190,14 +214,23 @@ class ProfileView extends GetView<ProfileController> {
                       height: 52,
                       child: OutlinedButton.icon(
                         onPressed: controller.logout,
-                        icon: const Icon(Icons.logout, color: Color(0xFFFF4B2B)),
+                        icon: const Icon(
+                          Icons.logout,
+                          color: Color(0xFFFF4B2B),
+                        ),
                         label: const Text(
                           'Logout',
-                          style: TextStyle(color: Color(0xFFFF4B2B), fontWeight: FontWeight.bold, fontSize: 15),
+                          style: TextStyle(
+                            color: Color(0xFFFF4B2B),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
                         ),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Color(0xFFFF4B2B)),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
                         ),
                       ),
                     ),
@@ -221,7 +254,11 @@ class ProfileView extends GetView<ProfileController> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
@@ -298,7 +335,13 @@ class ProfileView extends GetView<ProfileController> {
             ),
             const SizedBox(width: 14),
             Expanded(
-              child: Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+              child: Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
             Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
           ],
