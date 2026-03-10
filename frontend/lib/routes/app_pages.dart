@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 
+import '../modules/address/views/address_view.dart';
 import '../modules/admin/bindings/admin_binding.dart';
 import '../modules/admin/views/admin_dashboard_view.dart';
 import '../modules/admin/views/admin_restaurants_view.dart';
-import '../modules/address/views/address_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
 import '../modules/auth/views/register_view.dart';
@@ -19,10 +19,16 @@ import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/restaurant/bindings/restaurant_binding.dart';
 import '../modules/restaurant/views/restaurant_view.dart';
+import '../modules/restaurant_admin/bindings/restaurant_admin_binding.dart';
+import '../modules/restaurant_admin/views/restaurant_admin_dashboard_view.dart';
 import '../modules/search/bindings/search_binding.dart';
 import '../modules/search/views/search_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
+import '../modules/super_admin/bindings/super_admin_binding.dart';
+import '../modules/super_admin/views/super_admin_dashboard_view.dart';
+import '../modules/super_admin/views/super_admin_restaurants_view.dart';
+import '../modules/super_admin/views/super_admin_users_view.dart';
 
 class AppRoutes {
   static const splash = '/splash';
@@ -40,72 +46,45 @@ class AppRoutes {
   static const search = '/search';
   static const notifications = '/notifications';
   static const address = '/address';
+  // Super Admin
+  static const superAdminDashboard = '/super-admin-dashboard';
+  static const superAdminUsers = '/super-admin-users';
+  static const superAdminRestaurants = '/super-admin-restaurants';
+  // Restaurant Admin
+  static const restaurantAdminDashboard = '/restaurant-admin-dashboard';
 }
 
 class AppPages {
   static final pages = [
-    GetPage(
-      name: AppRoutes.splash,
-      page: () => const SplashView(),
-      binding: SplashBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.onboarding,
-      page: () => const OnboardingView(),
-      binding: OnboardingBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.login,
-      page: () => const LoginView(),
-      binding: AuthBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.register,
-      page: () => const RegisterView(),
-      binding: AuthBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.home,
-      page: () => const HomeView(),
-      binding: HomeBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.restaurantDetails,
-      page: () => const RestaurantView(),
-      binding: RestaurantBinding(),
-    ),
+    GetPage(name: AppRoutes.splash, page: () => const SplashView(), binding: SplashBinding()),
+    GetPage(name: AppRoutes.onboarding, page: () => const OnboardingView(), binding: OnboardingBinding()),
+    GetPage(name: AppRoutes.login, page: () => const LoginView(), binding: AuthBinding()),
+    GetPage(name: AppRoutes.register, page: () => const RegisterView(), binding: AuthBinding()),
+    GetPage(name: AppRoutes.home, page: () => const HomeView(), binding: HomeBinding()),
+    GetPage(name: AppRoutes.restaurantDetails, page: () => const RestaurantView(), binding: RestaurantBinding()),
     GetPage(name: AppRoutes.cart, page: () => const CartView()),
-    GetPage(
-      name: AppRoutes.orderTracking,
-      page: () => const OrderTrackingView(),
-    ),
-    GetPage(
-      name: AppRoutes.profile,
-      page: () => const ProfileView(),
-      binding: ProfileBinding(),
-    ),
+    GetPage(name: AppRoutes.orderTracking, page: () => const OrderTrackingView()),
+    GetPage(name: AppRoutes.profile, page: () => const ProfileView(), binding: ProfileBinding()),
     // Admin Pages
-    GetPage(
-      name: AppRoutes.adminDashboard,
-      page: () => const AdminDashboardView(),
-      binding: AdminBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.adminRestaurants,
-      page: () => const AdminRestaurantsView(),
-      binding: AdminBinding(),
-    ),
+    GetPage(name: AppRoutes.adminDashboard, page: () => const AdminDashboardView(), binding: AdminBinding()),
+    GetPage(name: AppRoutes.adminRestaurants, page: () => const AdminRestaurantsView(), binding: AdminBinding()),
     // New Pages
-    GetPage(
-      name: AppRoutes.search,
-      page: () => const SearchView(),
-      binding: SearchBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.notifications,
-      page: () => const NotificationsView(),
-      binding: NotificationsBinding(),
-    ),
+    GetPage(name: AppRoutes.search, page: () => const SearchView(), binding: SearchBinding()),
+    GetPage(name: AppRoutes.notifications, page: () => const NotificationsView(), binding: NotificationsBinding()),
     GetPage(name: AppRoutes.address, page: () => const AddressView()),
+    // Super Admin Pages
+    GetPage(name: AppRoutes.superAdminDashboard, page: () => const SuperAdminDashboardView(), binding: SuperAdminBinding()),
+    GetPage(name: AppRoutes.superAdminUsers, page: () => const SuperAdminUsersView(), binding: SuperAdminBinding()),
+    GetPage(
+      name: AppRoutes.superAdminRestaurants,
+      page: () => const SuperAdminRestaurantsView(),
+      binding: SuperAdminBinding(),
+    ),
+    // Restaurant Admin Pages
+    GetPage(
+      name: AppRoutes.restaurantAdminDashboard,
+      page: () => const RestaurantAdminDashboardView(),
+      binding: RestaurantAdminBinding(),
+    ),
   ];
 }
