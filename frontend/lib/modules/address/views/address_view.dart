@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../../core/theme/app_theme.dart';
 
 class AddressView extends StatefulWidget {
@@ -14,21 +15,9 @@ class _AddressViewState extends State<AddressView> {
   final TextEditingController _customController = TextEditingController();
 
   final List<Map<String, dynamic>> _savedAddresses = [
-    {
-      'label': 'Home',
-      'icon': Icons.home_outlined,
-      'address': '123 Main Street, Dhaka 1200',
-    },
-    {
-      'label': 'Work',
-      'icon': Icons.work_outline,
-      'address': '456 Office Tower, Gulshan, Dhaka 1212',
-    },
-    {
-      'label': 'Other',
-      'icon': Icons.location_on_outlined,
-      'address': '789 Park Ave, Dhanmondi, Dhaka 1205',
-    },
+    {'label': 'Home', 'icon': Icons.home_outlined, 'address': '123 Main Street, Dhaka 1200'},
+    {'label': 'Work', 'icon': Icons.work_outline, 'address': '456 Office Tower, Gulshan, Dhaka 1212'},
+    {'label': 'Other', 'icon': Icons.location_on_outlined, 'address': '789 Park Ave, Dhanmondi, Dhaka 1205'},
   ];
 
   @override
@@ -74,19 +63,8 @@ class _AddressViewState extends State<AddressView> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isSelected
-                          ? AppTheme.primaryColor
-                          : Colors.transparent,
-                      width: 2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    border: Border.all(color: isSelected ? AppTheme.primaryColor : Colors.transparent, width: 2),
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))],
                   ),
                   child: Row(
                     children: [
@@ -94,16 +72,12 @@ class _AddressViewState extends State<AddressView> {
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppTheme.primaryColor.withOpacity(0.1)
-                              : Colors.grey[100],
+                          color: isSelected ? AppTheme.primaryColor.withOpacity(0.1) : Colors.grey[100],
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           addr['icon'] as IconData,
-                          color: isSelected
-                              ? AppTheme.primaryColor
-                              : Colors.grey[500],
+                          color: isSelected ? AppTheme.primaryColor : Colors.grey[500],
                           size: 22,
                         ),
                       ),
@@ -117,27 +91,15 @@ class _AddressViewState extends State<AddressView> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
-                                color: isSelected
-                                    ? AppTheme.primaryColor
-                                    : const Color(0xFF1E2D3D),
+                                color: isSelected ? AppTheme.primaryColor : const Color(0xFF1E2D3D),
                               ),
                             ),
                             const SizedBox(height: 3),
-                            Text(
-                              addr['address'] as String,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[500],
-                              ),
-                            ),
+                            Text(addr['address'] as String, style: TextStyle(fontSize: 12, color: Colors.grey[500])),
                           ],
                         ),
                       ),
-                      if (isSelected)
-                        const Icon(
-                          Icons.check_circle,
-                          color: AppTheme.primaryColor,
-                        ),
+                      if (isSelected) const Icon(Icons.check_circle, color: AppTheme.primaryColor),
                     ],
                   ),
                 ),
@@ -147,18 +109,42 @@ class _AddressViewState extends State<AddressView> {
             const SizedBox(height: 24),
             _sectionHeader('Or Enter a New Address'),
             const SizedBox(height: 12),
+            // Map Picker Button
+            GestureDetector(
+              onTap: () async {
+                final result = await Get.to(() => const MapPickerView());
+                if (result != null && result['address'] != null) {
+                  setState(() => _customController.text = result['address']);
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: const [
+                    Icon(Icons.map_outlined, color: AppTheme.primaryColor, size: 22),
+                    SizedBox(width: 12),
+                    Text(
+                      'Pick location on Map',
+                      style: TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.w600, fontSize: 14),
+                    ),
+                    Spacer(),
+                    Icon(Icons.arrow_forward_ios, color: AppTheme.primaryColor, size: 14),
+                  ],
+                ),
+              ),
+            ),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 2))],
               ),
               child: TextField(
                 controller: _customController,
@@ -166,10 +152,7 @@ class _AddressViewState extends State<AddressView> {
                 decoration: InputDecoration(
                   hintText: 'Type your full address...',
                   hintStyle: TextStyle(color: Colors.grey[400]),
-                  prefixIcon: const Icon(
-                    Icons.edit_location_alt_outlined,
-                    color: AppTheme.primaryColor,
-                  ),
+                  prefixIcon: const Icon(Icons.edit_location_alt_outlined, color: AppTheme.primaryColor),
                   border: InputBorder.none,
                 ),
               ),
@@ -196,15 +179,8 @@ class _AddressViewState extends State<AddressView> {
                     duration: const Duration(seconds: 3),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: const Text(
-                  'Confirm Address',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+                style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+                child: const Text('Confirm Address', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ),
           ],
@@ -216,11 +192,7 @@ class _AddressViewState extends State<AddressView> {
   Widget _sectionHeader(String title) {
     return Text(
       title,
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF1E2D3D),
-      ),
+      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF1E2D3D)),
     );
   }
 }

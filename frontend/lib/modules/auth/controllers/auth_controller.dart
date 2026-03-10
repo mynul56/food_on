@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../core/utils/ui_utils.dart';
 import '../../../data/providers/auth_service.dart';
+import '../../../data/providers/socket_service.dart';
 import '../../../routes/app_pages.dart';
 
 class AuthController extends GetxController {
@@ -43,8 +44,16 @@ class AuthController extends GetxController {
       if (result['token'] != null) {
         final user = result['user'];
         AppUIUtils.showSuccess('Welcome back, ${user['name']}!');
-        if (user != null && user['role'] == 'admin') {
-          Get.offAllNamed(AppRoutes.adminDashboard);
+
+        // Connect socket for this user
+        final socket = Get.find<SocketService>();
+        socket.joinUserRoom('${user['id']}');
+
+        final role = user['role'] ?? 'user';
+        if (role == 'superadmin') {
+          Get.offAllNamed(AppRoutes.superAdminDashboard);
+        } else if (role == 'admin' || role == 'restaurant') {
+          Get.offAllNamed(AppRoutes.restaurantAdminDashboard);
         } else {
           Get.offAllNamed(AppRoutes.home);
         }
@@ -83,6 +92,9 @@ class AuthController extends GetxController {
 
       if (result['token'] != null) {
         AppUIUtils.showSuccess('Account created successfully!');
+        final socket = Get.find<SocketService>();
+        final user = result['user'];
+        if (user != null) socket.joinUserRoom('${user['id']}');
         Get.offAllNamed(AppRoutes.home);
       } else {
         AppUIUtils.showError(result['message'] ?? 'Registration failed');
