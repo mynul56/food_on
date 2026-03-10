@@ -1,7 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../core/utils/constants.dart';
 
 class AuthService extends GetxService {
@@ -9,10 +12,25 @@ class AuthService extends GetxService {
   final _token = RxnString();
   String? get token => _token.value;
 
+  final _initCompleter = Completer<void>();
+
+  Future<void> waitForInit() => _initCompleter.future;
+
+  Map<String, dynamic>? get currentUser {
+    final raw = _prefs.getString(AppConstants.userKey);
+    if (raw == null) return null;
+    try {
+      return jsonDecode(raw) as Map<String, dynamic>;
+    } catch (_) {
+      return null;
+    }
+  }
+
   @override
   void onInit() async {
     _prefs = await SharedPreferences.getInstance();
     _token.value = _prefs.getString(AppConstants.tokenKey);
+    _initCompleter.complete();
     super.onInit();
   }
 
@@ -31,10 +49,7 @@ class AuthService extends GetxService {
           final data = jsonDecode(response.body);
           if (data['token'] != null) {
             await saveToken(data['token']);
-            await _prefs.setString(
-              AppConstants.userKey,
-              jsonEncode(data['user']),
-            );
+            await _prefs.setString(AppConstants.userKey, jsonEncode(data['user']));
           }
           return data;
         } catch (e) {
@@ -43,11 +58,7 @@ class AuthService extends GetxService {
       } else {
         try {
           final data = jsonDecode(response.body);
-          return {
-            'message':
-                data['message'] ??
-                'Login failed. Status: ${response.statusCode}',
-          };
+          return {'message': data['message'] ?? 'Login failed. Status: ${response.statusCode}'};
         } catch (e) {
           return {'message': 'Login failed. Status: ${response.statusCode}'};
         }
