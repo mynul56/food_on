@@ -34,7 +34,6 @@ class RestaurantAdminDashboardView extends GetView<RestaurantAdminController> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final r = controller.restaurant;
     return SliverAppBar(
       expandedHeight: 180,
       pinned: true,

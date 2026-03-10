@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/theme/app_theme.dart';
+import 'map_picker_view.dart';
 
 class AddressView extends StatefulWidget {
   const AddressView({super.key});
