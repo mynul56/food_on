@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-import '../../core/utils/constants.dart';
-import '../../core/utils/ui_utils.dart';
-import '../../data/providers/auth_service.dart';
+import '../../../core/utils/constants.dart';
+import '../../../core/utils/ui_utils.dart';
+import '../../../data/providers/auth_service.dart';
 
 class SuperAdminController extends GetxController {
   final _auth = Get.find<AuthService>();

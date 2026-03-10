@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dio_pkg;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -12,7 +11,7 @@ import '../../../data/providers/auth_service.dart';
 
 class RestaurantAdminController extends GetxController {
   final _auth = Get.find<AuthService>();
-  final _dio = Dio();
+  final _dio = dio_pkg.Dio();
 
   final isLoadingMenu = false.obs;
   final isLoadingRestaurant = false.obs;
@@ -99,7 +98,7 @@ class RestaurantAdminController extends GetxController {
       final uri = itemId != null ? '${AppConstants.apiUrl}/menu/$itemId' : '${AppConstants.apiUrl}/menu';
       final method = itemId != null ? 'PUT' : 'POST';
 
-      FormData formData = FormData.fromMap({
+      dio_pkg.FormData formData = dio_pkg.FormData.fromMap({
         'restaurantId': rId,
         'name': name,
         'description': description,
@@ -108,19 +107,19 @@ class RestaurantAdminController extends GetxController {
         'isVeg': isVeg.toString(),
         'isAvailable': isAvailable.toString(),
         if (imageUrl != null && imageUrl.isNotEmpty) 'imageUrl': imageUrl,
-        if (imageFile != null) 'image': await MultipartFile.fromFile(imageFile.path, filename: imageFile.name),
+        if (imageFile != null) 'image': await dio_pkg.MultipartFile.fromFile(imageFile.path, filename: imageFile.name),
       });
 
       final resp = method == 'POST'
           ? await _dio.post(
               uri,
               data: formData,
-              options: Options(headers: {'Authorization': 'Bearer $_token'}),
+              options: dio_pkg.Options(headers: {'Authorization': 'Bearer $_token'}),
             )
           : await _dio.put(
               uri,
               data: formData,
-              options: Options(headers: {'Authorization': 'Bearer $_token'}),
+              options: dio_pkg.Options(headers: {'Authorization': 'Bearer $_token'}),
             );
 
       if (resp.statusCode == 200 || resp.statusCode == 201) {
