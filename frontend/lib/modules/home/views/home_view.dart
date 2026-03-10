@@ -166,7 +166,7 @@ class HomeView extends GetView<HomeController> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
-        height: 130,
+        height: 160,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [AppTheme.primaryColor, AppTheme.primaryLight],
