@@ -17,7 +17,7 @@ class FoodOnApp extends StatelessWidget {
       title: 'Food ON',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.onboarding,
+      initialRoute: AppRoutes.splash,
       getPages: AppPages.pages,
     );
   }

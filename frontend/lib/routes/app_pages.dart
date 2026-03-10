@@ -21,8 +21,11 @@ import '../modules/restaurant/bindings/restaurant_binding.dart';
 import '../modules/restaurant/views/restaurant_view.dart';
 import '../modules/search/bindings/search_binding.dart';
 import '../modules/search/views/search_view.dart';
+import '../modules/splash/bindings/splash_binding.dart';
+import '../modules/splash/views/splash_view.dart';
 
 class AppRoutes {
+  static const splash = '/splash';
   static const onboarding = '/onboarding';
   static const login = '/login';
   static const register = '/register';
@@ -41,6 +44,11 @@ class AppRoutes {
 
 class AppPages {
   static final pages = [
+    GetPage(
+      name: AppRoutes.splash,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
+    ),
     GetPage(
       name: AppRoutes.onboarding,
       page: () => const OnboardingView(),
