@@ -30,7 +30,7 @@ class SplashController extends GetxController {
       } else if (role == 'admin' || role == 'restaurant') {
         Get.offAllNamed(AppRoutes.restaurantAdminDashboard);
       } else {
-        Get.offAllNamed(AppRoutes.home);
+        Get.offAllNamed(AppRoutes.main);
       }
     } else {
       Get.offAllNamed(AppRoutes.onboarding);

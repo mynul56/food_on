@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/app_bottom_nav.dart';
-import '../../../routes/app_pages.dart';
+import '../../../modules/main/controllers/main_controller.dart';
 import '../controllers/cart_controller.dart';
 
 class CartView extends GetView<CartController> {
@@ -20,7 +19,6 @@ class CartView extends GetView<CartController> {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7FA),
       appBar: _buildAppBar(context),
-      bottomNavigationBar: const AppBottomNav(currentIndex: 1),
       body: Obx(
         () => controller.cartItems.isEmpty
             ? _buildEmptyCart()
@@ -156,7 +154,7 @@ class CartView extends GetView<CartController> {
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: () => Get.toNamed(AppRoutes.orderTracking),
+              onPressed: () => Get.find<MainController>().goToTab(2),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.white,

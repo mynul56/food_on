@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../modules/cart/controllers/cart_controller.dart';
 import '../../../modules/notifications/controllers/notifications_controller.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
@@ -17,8 +16,6 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final cartController = Get.find<CartController>();
-
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7FA),
       body: RefreshIndicator(
@@ -47,11 +44,10 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
             _buildRestaurantList(),
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(cartController),
     );
   }
 
@@ -84,21 +80,13 @@ class HomeView extends GetView<HomeController> {
                   children: [
                     Text(
                       'Hey, ${name.split(' ').first} 👋',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E2D3D),
-                      ),
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1E2D3D)),
                     ),
                     GestureDetector(
                       onTap: () => Get.toNamed(AppRoutes.address),
                       child: Row(
                         children: [
-                          const Icon(
-                            Icons.location_on_rounded,
-                            size: 13,
-                            color: AppTheme.primaryColor,
-                          ),
+                          const Icon(Icons.location_on_rounded, size: 13, color: AppTheme.primaryColor),
                           const SizedBox(width: 3),
                           Text(
                             'Set delivery address',
@@ -117,8 +105,7 @@ class HomeView extends GetView<HomeController> {
               ),
               // Notification bell with badge
               Obx(() {
-                final notifController =
-                    Get.isRegistered<NotificationsController>()
+                final notifController = Get.isRegistered<NotificationsController>()
                     ? Get.find<NotificationsController>()
                     : null;
                 final count = notifController?.unreadCount.value ?? 0;
@@ -130,15 +117,8 @@ class HomeView extends GetView<HomeController> {
                       Container(
                         width: 44,
                         height: 44,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFF0ED),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: const Icon(
-                          Icons.notifications_outlined,
-                          color: AppTheme.primaryColor,
-                          size: 22,
-                        ),
+                        decoration: BoxDecoration(color: const Color(0xFFFFF0ED), borderRadius: BorderRadius.circular(14)),
+                        child: const Icon(Icons.notifications_outlined, color: AppTheme.primaryColor, size: 22),
                       ),
                       if (count > 0)
                         Positioned(
@@ -146,17 +126,10 @@ class HomeView extends GetView<HomeController> {
                           right: -4,
                           child: Container(
                             padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              color: AppTheme.primaryColor,
-                              shape: BoxShape.circle,
-                            ),
+                            decoration: const BoxDecoration(color: AppTheme.primaryColor, shape: BoxShape.circle),
                             child: Text(
                               '$count',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -181,27 +154,14 @@ class HomeView extends GetView<HomeController> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 4))],
           ),
           padding: const EdgeInsets.symmetric(horizontal: 18),
           child: Row(
             children: [
-              const Icon(
-                Icons.search_rounded,
-                color: AppTheme.primaryColor,
-                size: 22,
-              ),
+              const Icon(Icons.search_rounded, color: AppTheme.primaryColor, size: 22),
               const SizedBox(width: 12),
-              Text(
-                'Search restaurants, dishes...',
-                style: TextStyle(color: Colors.grey[400], fontSize: 14),
-              ),
+              Text('Search restaurants, dishes...', style: TextStyle(color: Colors.grey[400], fontSize: 14)),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.all(7),
@@ -209,11 +169,7 @@ class HomeView extends GetView<HomeController> {
                   color: AppTheme.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(9),
                 ),
-                child: const Icon(
-                  Icons.tune_rounded,
-                  color: AppTheme.primaryColor,
-                  size: 15,
-                ),
+                child: const Icon(Icons.tune_rounded, color: AppTheme.primaryColor, size: 15),
               ),
             ],
           ),
@@ -235,11 +191,7 @@ class HomeView extends GetView<HomeController> {
           ),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF1E2D3D).withValues(alpha: 0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
+            BoxShadow(color: const Color(0xFF1E2D3D).withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 8)),
           ],
         ),
         child: Stack(
@@ -250,10 +202,7 @@ class HomeView extends GetView<HomeController> {
               child: Container(
                 width: 120,
                 height: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.05),
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.05)),
               ),
             ),
             Positioned(
@@ -262,10 +211,7 @@ class HomeView extends GetView<HomeController> {
               child: Container(
                 width: 90,
                 height: 90,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.05),
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.05)),
               ),
             ),
             Padding(
@@ -278,52 +224,27 @@ class HomeView extends GetView<HomeController> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppTheme.primaryColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(color: AppTheme.primaryColor, borderRadius: BorderRadius.circular(20)),
                           child: const Text(
                             '🔥  Special Offer',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
                           ),
                         ),
                         const SizedBox(height: 10),
                         const Text(
                           'Get 20% off\nyour first order!',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold,
-                            height: 1.25,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.bold, height: 1.25),
                         ),
                         const SizedBox(height: 14),
                         GestureDetector(
                           onTap: () => Get.toNamed(AppRoutes.search),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                              vertical: 9,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryColor,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+                            decoration: BoxDecoration(color: AppTheme.primaryColor, borderRadius: BorderRadius.circular(12)),
                             child: const Text(
                               'Order Now →',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
                             ),
                           ),
                         ),
@@ -345,11 +266,7 @@ class HomeView extends GetView<HomeController> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF1E2D3D),
-        ),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E2D3D)),
       ),
     );
   }
@@ -383,10 +300,7 @@ class HomeView extends GetView<HomeController> {
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 10,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -416,12 +330,7 @@ class HomeView extends GetView<HomeController> {
       if (controller.isLoading.value) {
         return SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (_, __) => _shimmerCard(),
-              childCount: 3,
-            ),
-          ),
+          sliver: SliverList(delegate: SliverChildBuilderDelegate((_, __) => _shimmerCard(), childCount: 3)),
         );
       }
 
@@ -441,14 +350,8 @@ class HomeView extends GetView<HomeController> {
                 const SizedBox(height: 20),
                 TextButton.icon(
                   onPressed: () => controller.fetchRestaurants(),
-                  icon: const Icon(
-                    Icons.refresh_rounded,
-                    color: AppTheme.primaryColor,
-                  ),
-                  label: const Text(
-                    'Retry',
-                    style: TextStyle(color: AppTheme.primaryColor),
-                  ),
+                  icon: const Icon(Icons.refresh_rounded, color: AppTheme.primaryColor),
+                  label: const Text('Retry', style: TextStyle(color: AppTheme.primaryColor)),
                 ),
               ],
             ),
@@ -496,44 +399,30 @@ class HomeView extends GetView<HomeController> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 18),
         height: 260,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-        ),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(22)),
       ),
     );
   }
 
   Widget _buildRestaurantCard(BuildContext context, dynamic r) {
     return GestureDetector(
-      onTap: () =>
-          Get.toNamed(AppRoutes.restaurantDetails, arguments: {'id': r['id']}),
+      onTap: () => Get.toNamed(AppRoutes.restaurantDetails, arguments: {'id': r['id']}),
       child: Container(
         margin: const EdgeInsets.only(bottom: 18),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(22),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.07),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.07), blurRadius: 16, offset: const Offset(0, 6))],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(22),
-              ),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
               child: Stack(
                 children: [
                   CachedNetworkImage(
-                    imageUrl:
-                        r['imageUrl'] ??
-                        'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80',
+                    imageUrl: r['imageUrl'] ?? 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80',
                     height: 175,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -545,9 +434,7 @@ class HomeView extends GetView<HomeController> {
                     errorWidget: (_, __, ___) => Container(
                       height: 175,
                       color: const Color(0xFFF0F0F0),
-                      child: const Center(
-                        child: Text('🍴', style: TextStyle(fontSize: 48)),
-                      ),
+                      child: const Center(child: Text('🍴', style: TextStyle(fontSize: 48))),
                     ),
                   ),
                   // Gradient overlay at bottom
@@ -561,10 +448,7 @@ class HomeView extends GetView<HomeController> {
                         gradient: LinearGradient(
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
-                          colors: [
-                            Colors.black.withValues(alpha: 0.35),
-                            Colors.transparent,
-                          ],
+                          colors: [Colors.black.withValues(alpha: 0.35), Colors.transparent],
                         ),
                       ),
                     ),
@@ -574,35 +458,20 @@ class HomeView extends GetView<HomeController> {
                     top: 12,
                     right: 12,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.12),
-                            blurRadius: 8,
-                          ),
-                        ],
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 8)],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
-                            Icons.star_rounded,
-                            color: Colors.amber,
-                            size: 14,
-                          ),
+                          const Icon(Icons.star_rounded, color: Colors.amber, size: 14),
                           const SizedBox(width: 3),
                           Text(
                             (r['rating'] ?? 4.5).toString(),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                           ),
                         ],
                       ),
@@ -614,21 +483,11 @@ class HomeView extends GetView<HomeController> {
                       top: 12,
                       left: 12,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppTheme.successColor,
-                          borderRadius: BorderRadius.circular(24),
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(color: AppTheme.successColor, borderRadius: BorderRadius.circular(24)),
                         child: const Text(
                           'Free Delivery',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -645,26 +504,16 @@ class HomeView extends GetView<HomeController> {
                       children: [
                         Text(
                           r['name'] ?? 'Restaurant',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Color(0xFF1E2D3D),
-                          ),
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1E2D3D)),
                         ),
                         const SizedBox(height: 6),
                         Row(
                           children: [
-                            _chip(
-                              Icons.access_time_rounded,
-                              r['deliveryTime'] ?? '30 min',
-                              AppTheme.primaryColor,
-                            ),
+                            _chip(Icons.access_time_rounded, r['deliveryTime'] ?? '30 min', AppTheme.primaryColor),
                             const SizedBox(width: 10),
                             _chip(
                               Icons.delivery_dining_rounded,
-                              (r['deliveryFee'] ?? 1) == 0
-                                  ? 'Free'
-                                  : '\$${r['deliveryFee']}',
+                              (r['deliveryFee'] ?? 1) == 0 ? 'Free' : '\$${r['deliveryFee']}',
                               Colors.green,
                             ),
                           ],
@@ -675,15 +524,8 @@ class HomeView extends GetView<HomeController> {
                   Container(
                     width: 38,
                     height: 38,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFF0ED),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: AppTheme.primaryColor,
-                      size: 16,
-                    ),
+                    decoration: BoxDecoration(color: const Color(0xFFFFF0ED), borderRadius: BorderRadius.circular(12)),
+                    child: const Icon(Icons.arrow_forward_ios_rounded, color: AppTheme.primaryColor, size: 16),
                   ),
                 ],
               ),
@@ -697,10 +539,7 @@ class HomeView extends GetView<HomeController> {
   Widget _chip(IconData icon, String label, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-      ),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -708,149 +547,9 @@ class HomeView extends GetView<HomeController> {
           const SizedBox(width: 4),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 11,
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.w600),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNav(CartController cartController) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.07),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          child: Row(
-            children: [
-              _navItem(Icons.home_rounded, 'Home', true, () {}),
-              // Cart with live badge
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => Get.toNamed(AppRoutes.cart),
-                  behavior: HitTestBehavior.opaque,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Obx(() {
-                          final count = cartController.cartItems.length;
-                          return Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Icon(
-                                Icons.shopping_bag_rounded,
-                                color: Colors.grey[400],
-                                size: 24,
-                              ),
-                              if (count > 0)
-                                Positioned(
-                                  top: -6,
-                                  right: -8,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: const BoxDecoration(
-                                      color: AppTheme.primaryColor,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Text(
-                                      '$count',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 9,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          );
-                        }),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Cart',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey[400],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              _navItem(
-                Icons.receipt_long_rounded,
-                'Orders',
-                false,
-                () => Get.toNamed(AppRoutes.orderTracking),
-              ),
-              _navItem(
-                Icons.person_rounded,
-                'Profile',
-                false,
-                () => Get.toNamed(AppRoutes.profile),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _navItem(
-    IconData icon,
-    String label,
-    bool active,
-    VoidCallback onTap,
-  ) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: active
-                ? AppTheme.primaryColor.withValues(alpha: 0.08)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                color: active ? AppTheme.primaryColor : Colors.grey[400],
-                size: 24,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: active ? FontWeight.bold : FontWeight.normal,
-                  color: active ? AppTheme.primaryColor : Colors.grey[400],
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

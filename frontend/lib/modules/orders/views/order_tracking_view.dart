@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../core/widgets/app_bottom_nav.dart';
-
 class OrderTrackingView extends StatelessWidget {
   const OrderTrackingView({super.key});
 
@@ -227,9 +225,6 @@ class OrderTrackingView extends StatelessWidget {
           ),
         ],
       ),
-
-      // --- Bottom action ---
-      bottomNavigationBar: const AppBottomNav(currentIndex: 2),
     );
   }
 
@@ -288,94 +283,91 @@ class _TimelineStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Indicator column
-          SizedBox(
-            width: 44,
-            child: Column(
-              children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  width: 40,
-                  height: 40,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Indicator column
+        SizedBox(
+          width: 44,
+          child: Column(
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: isDone ? theme.primaryColor : const Color(0xFFF0F0F0),
+                  shape: BoxShape.circle,
+                  border: isActive ? Border.all(color: theme.primaryColor.withValues(alpha: 0.3), width: 4) : null,
+                  boxShadow: isDone
+                      ? [
+                          BoxShadow(
+                            color: theme.primaryColor.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ]
+                      : [],
+                ),
+                child: Icon(
+                  isDone && !isActive ? Icons.check_rounded : icon,
+                  size: 18,
+                  color: isDone ? Colors.white : Colors.grey[400],
+                ),
+              ),
+              if (!isLast)
+                Container(
+                  width: 2,
+                  height: 36,
+                  margin: const EdgeInsets.symmetric(vertical: 4),
                   decoration: BoxDecoration(
-                    color: isDone ? theme.primaryColor : const Color(0xFFF0F0F0),
-                    shape: BoxShape.circle,
-                    border: isActive ? Border.all(color: theme.primaryColor.withValues(alpha: 0.3), width: 4) : null,
-                    boxShadow: isDone
-                        ? [
-                            BoxShadow(
-                              color: theme.primaryColor.withValues(alpha: 0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ]
-                        : [],
-                  ),
-                  child: Icon(
-                    isDone && !isActive ? Icons.check_rounded : icon,
-                    size: 18,
-                    color: isDone ? Colors.white : Colors.grey[400],
+                    gradient: isDone
+                        ? LinearGradient(
+                            colors: [theme.primaryColor, theme.primaryColor.withValues(alpha: 0.3)],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          )
+                        : null,
+                    color: isDone ? null : const Color(0xFFEEEEEE),
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                if (!isLast)
-                  Expanded(
-                    child: Container(
-                      width: 2,
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      decoration: BoxDecoration(
-                        gradient: isDone
-                            ? LinearGradient(
-                                colors: [theme.primaryColor, theme.primaryColor.withValues(alpha: 0.3)],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              )
-                            : null,
-                        color: isDone ? null : const Color(0xFFEEEEEE),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 14),
+        // Text
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: isLast ? 0 : 22),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: isDone ? const Color(0xFF1E2D3D) : Colors.grey[400],
                   ),
+                ),
+                const SizedBox(height: 3),
+                Text(desc, style: TextStyle(color: Colors.grey[500], fontSize: 12)),
               ],
             ),
           ),
-          const SizedBox(width: 14),
-          // Text
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: isLast ? 0 : 22),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8),
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: isDone ? const Color(0xFF1E2D3D) : Colors.grey[400],
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(desc, style: TextStyle(color: Colors.grey[500], fontSize: 12)),
-                ],
-              ),
+        ),
+        if (isDone && !isActive)
+          Padding(
+            padding: const EdgeInsets.only(top: 10, right: 4),
+            child: Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(color: theme.primaryColor.withValues(alpha: 0.1), shape: BoxShape.circle),
+              child: Icon(Icons.done_rounded, color: theme.primaryColor, size: 14),
             ),
           ),
-          if (isDone && !isActive)
-            Padding(
-              padding: const EdgeInsets.only(top: 10, right: 4),
-              child: Container(
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(color: theme.primaryColor.withValues(alpha: 0.1), shape: BoxShape.circle),
-                child: Icon(Icons.done_rounded, color: theme.primaryColor, size: 14),
-              ),
-            ),
-        ],
-      ),
+      ],
     );
   }
 }

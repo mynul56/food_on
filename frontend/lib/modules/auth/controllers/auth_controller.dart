@@ -55,7 +55,7 @@ class AuthController extends GetxController {
         } else if (role == 'admin' || role == 'restaurant') {
           Get.offAllNamed(AppRoutes.restaurantAdminDashboard);
         } else {
-          Get.offAllNamed(AppRoutes.home);
+          Get.offAllNamed(AppRoutes.main);
         }
       } else {
         AppUIUtils.showError(result['message'] ?? 'Login failed');
@@ -95,7 +95,7 @@ class AuthController extends GetxController {
         final socket = Get.find<SocketService>();
         final user = result['user'];
         if (user != null) socket.joinUserRoom('${user['id']}');
-        Get.offAllNamed(AppRoutes.home);
+        Get.offAllNamed(AppRoutes.main);
       } else {
         AppUIUtils.showError(result['message'] ?? 'Registration failed');
       }

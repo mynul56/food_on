@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/app_bottom_nav.dart';
 import '../../../routes/app_pages.dart';
+import '../../main/controllers/main_controller.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -14,7 +14,6 @@ class ProfileView extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7FA),
-      bottomNavigationBar: const AppBottomNav(currentIndex: 3),
       body: CustomScrollView(
         slivers: [
           _buildHeader(context),
@@ -100,7 +99,7 @@ class ProfileView extends GetView<ProfileController> {
                             label: 'My Orders',
                             subtitle: 'Track your past orders',
                             color: const Color(0xFF5B8DEF),
-                            onTap: () => Get.toNamed(AppRoutes.orderTracking),
+                            onTap: () => Get.find<MainController>().goToTab(2),
                           ),
                           _divider(),
                           _actionTile(
